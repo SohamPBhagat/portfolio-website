@@ -88,42 +88,41 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
   useEffect(() => {
     let isMounted = true;
 
-    // 1. Initial State: Opening ("SO [box] HAM")
-    setStage('opening');
+    // 1. Initial State: Opening
     setActiveImageIdx(0);
     if (onStateChangeRef.current) onStateChangeRef.current(false);
 
-    // 2. Open aperture & show image 1 (strobe) at 500ms
+    // 2. Open aperture & show image 1 (strobe) at 200ms
     const t1 = setTimeout(() => {
       if (!isMounted) return;
       setStage('strobe');
       setActiveImageIdx(0);
-    }, 500);
+    }, 200);
 
-    // 3. Strobe to image 2 at 850ms
+    // 3. Strobe to image 2 at 500ms
     const t2 = setTimeout(() => {
       if (!isMounted) return;
       setActiveImageIdx(1);
-    }, 850);
+    }, 500);
 
-    // 4. Strobe to Soham's photo at 1200ms
+    // 4. Strobe to Soham's photo at 800ms
     const t3 = setTimeout(() => {
       if (!isMounted) return;
       setActiveImageIdx(2);
-    }, 1200);
+    }, 800);
 
-    // 5. Expand aperture to full screen at 1550ms
+    // 5. Expand aperture to full screen at 1100ms
     const t4 = setTimeout(() => {
       if (!isMounted) return;
       setStage('expand');
-    }, 1550);
+    }, 1100);
 
-    // 6. Complete intro and reveal headline wave at 2400ms
+    // 6. Complete intro and reveal headline wave at 1600ms
     const t5 = setTimeout(() => {
       if (!isMounted) return;
       setStage('ready');
       if (onStateChangeRef.current) onStateChangeRef.current(true);
-    }, 2400);
+    }, 1600);
 
     return () => {
       isMounted = false;
@@ -198,7 +197,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
                 {images.map((img, idx) => (
                   <motion.div
                     key={img.src}
-                    initial={{ opacity: 0 }}
+                    initial={{ opacity: idx === 0 ? 1 : 0 }}
                     animate={{
                       opacity: activeImageIdx === idx ? 1 : 0,
                     }}
