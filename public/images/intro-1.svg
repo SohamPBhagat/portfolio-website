@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090A0F" />
+      <stop offset="100%" stop-color="#141824" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F4D24A" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Window Background -->
+  <rect width="800" height="450" rx="16" fill="url(#bgGrad)" stroke="#222738" stroke-width="2"/>
+  
+  <!-- Window Titlebar -->
+  <rect width="800" height="44" rx="16" fill="#0E121E" />
+  <circle cx="28" cy="22" r="6" fill="#EF4444"/>
+  <circle cx="48" cy="22" r="6" fill="#F59E0B"/>
+  <circle cx="68" cy="22" r="6" fill="#10B981"/>
+  
+  <text x="400" y="27" fill="#64748B" font-family="JetBrains Mono, monospace" font-size="12" text-anchor="middle">forge_studio_orchestrator.ts — Session #04</text>
+  
+  <!-- Terminal Grid & Code Lines -->
+  <g font-family="JetBrains Mono, monospace" font-size="14" fill="#94A3B8">
+    <text x="40" y="80" fill="#6366F1">import</text>
+    <text x="100" y="80" fill="#F8FAFC">{ MultiAgentOrchestrator, GitWorktree } from</text>
+    <text x="470" y="80" fill="#F4D24A">'@forge/core'</text>
+    <text x="590" y="80" fill="#F8FAFC">;</text>
+
+    <text x="40" y="115" fill="#64748B">// Initializing isolated parallel sandboxes</text>
+    <text x="40" y="145" fill="#6366F1">const</text>
+    <text x="90" y="145" fill="#10B981">agentPool</text>
+    <text x="180" y="145" fill="#F8FAFC">= new MultiAgentOrchestrator({</text>
+    <text x="65" y="175" fill="#94A3B8">worktreeRoot:</text>
+    <text x="190" y="175" fill="#F4D24A">'.worktrees/session_47'</text>
+    <text x="390" y="175" fill="#F8FAFC">,</text>
+    <text x="65" y="205" fill="#94A3B8">concurrency:</text>
+    <text x="180" y="205" fill="#F4D24A">4</text>
+    <text x="195" y="205" fill="#F8FAFC">,</text>
+    <text x="65" y="235" fill="#94A3B8">streamPty:</text>
+    <text x="165" y="235" fill="#10B981">true</text>
+    <text x="40" y="265" fill="#F8FAFC">});</text>
+
+    <!-- Execution Log Box -->
+    <rect x="40" y="295" width="720" height="115" rx="8" fill="#080A10" stroke="#1E293B" stroke-width="1"/>
+    <text x="58" y="325" fill="#10B981" font-size="12">✔ [WORKTREE-01] Claude Code spawned on isolated branch /feat-ast-parser</text>
+    <text x="58" y="350" fill="#F4D24A" font-size="12">⚡ [WORKTREE-02] Antigravity CLI executing parallel build test (port 3030)</text>
+    <text x="58" y="375" fill="#6366F1" font-size="12">✦ [SYSTEM] Real-time GPU xterm.js streaming active • 0 branch collisions</text>
+  </g>
+</svg>

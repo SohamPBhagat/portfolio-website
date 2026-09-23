@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <radialGradient id="meshGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F4D24A" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#6366F1" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#090A0F" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" rx="16" fill="#090A0F" stroke="#222738" stroke-width="2"/>
+  <rect width="800" height="450" fill="url(#meshGlow)"/>
+
+  <!-- Neural Mesh Nodes & Filaments -->
+  <g stroke="#F4D24A" stroke-opacity="0.2" stroke-width="1.5">
+    <line x1="180" y1="120" x2="320" y2="210" />
+    <line x1="320" y1="210" x2="480" y2="150" />
+    <line x1="480" y1="150" x2="620" y2="240" />
+    <line x1="320" y1="210" x2="380" y2="340" />
+    <line x1="480" y1="150" x2="540" y2="330" />
+    <line x1="380" y1="340" x2="540" y2="330" />
+    <line x1="180" y1="120" x2="220" y2="290" />
+    <line x1="220" y1="290" x2="380" y2="340" />
+    <line x1="620" y1="240" x2="680" y2="130" />
+    <line x1="480" y1="150" x2="680" y2="130" />
+  </g>
+
+  <!-- Glowing Nodes -->
+  <g>
+    <!-- Node 1 -->
+    <circle cx="180" cy="120" r="8" fill="#F4D24A" />
+    <text x="180" y="95" fill="#F4D24A" font-family="JetBrains Mono, monospace" font-size="11" text-anchor="middle">SQLite Memory (&lt;200 tok)</text>
+
+    <!-- Node 2 -->
+    <circle cx="320" cy="210" r="12" fill="#10B981" />
+    <text x="320" y="240" fill="#10B981" font-family="JetBrains Mono, monospace" font-size="11" text-anchor="middle">Verica Knowledge Graph</text>
+
+    <!-- Node 3 -->
+    <circle cx="480" cy="150" r="14" fill="#6366F1" />
+    <text x="480" y="120" fill="#A5B4FC" font-family="JetBrains Mono, monospace" font-size="11" text-anchor="middle">768-D Embeddings</text>
+
+    <!-- Node 4 -->
+    <circle cx="620" cy="240" r="9" fill="#F4D24A" />
+    <text x="620" y="270" fill="#F4D24A" font-family="JetBrains Mono, monospace" font-size="11" text-anchor="middle">Screen Vision OCR</text>
+
+    <!-- Node 5 -->
+    <circle cx="380" cy="340" r="10" fill="#EC4899" />
+    <text x="380" y="370" fill="#F472B6" font-family="JetBrains Mono, monospace" font-size="11" text-anchor="middle">SPPU Statistical Engine</text>
+
+    <!-- Node 6 -->
+    <circle cx="540" cy="330" r="11" fill="#10B981" />
+    <text x="540" y="360" fill="#6EE7B7" font-family="JetBrains Mono, monospace" font-size="11" text-anchor="middle">HyperFrames Video Agent</text>
+  </g>
+
+  <!-- HUD Overlay Info -->
+  <rect x="30" y="30" width="220" height="32" rx="16" fill="#0E121E" stroke="#1E293B" stroke-width="1"/>
+  <circle cx="46" cy="46" r="4" fill="#10B981"/>
+  <text x="58" y="50" fill="#F8FAFC" font-family="JetBrains Mono, monospace" font-size="10">KNOWLEDGE VECTOR GRAPH</text>
+</svg>
