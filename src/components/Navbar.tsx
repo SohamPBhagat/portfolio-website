@@ -43,8 +43,12 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
         isVisibleInHero ? 'opacity-100' : 'opacity-0 pointer-events-none'
       } pt-6 sm:pt-7 pb-4 px-6 sm:px-10 lg:px-14 xl:px-20 pointer-events-none flex justify-center`}
     >
-      {/* 🌌 Silky Top Contrast Scrim (Ensures 100% Sharp Legibility over Golden Clouds) */}
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/65 via-black/25 to-transparent pointer-events-none -z-10" />
+      {/* 🌌 Silky Top Contrast Scrim (Active only in Hero, Fades cleanly on light sections) */}
+      <div
+        className={`absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/65 via-black/25 to-transparent pointer-events-none -z-10 transition-opacity duration-500 ${
+          isScrolledPastTop ? 'opacity-0' : 'opacity-100'
+        }`}
+      />
 
       {/* Full-Width Header Stage */}
       <div className="w-full max-w-[1520px] flex items-center justify-between relative bg-transparent pointer-events-auto">
@@ -57,7 +61,11 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="font-sans font-black text-xl sm:text-2xl tracking-[0.24em] uppercase text-white hover:text-[#FF3B1D] transition-colors select-none drop-shadow-[0_2px_16px_rgba(0,0,0,0.95)] leading-none py-1"
+            className={`font-sans font-black text-xl sm:text-2xl tracking-[0.24em] uppercase hover:text-[#FF3B1D] transition-all duration-300 select-none leading-none py-1 ${
+              isScrolledPastTop
+                ? 'text-[#111111] drop-shadow-none'
+                : 'text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.95)]'
+            }`}
           >
             <span>SOHAM</span>
             <span className="text-[#FF3B1D]">.</span>

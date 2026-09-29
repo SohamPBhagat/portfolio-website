@@ -2,19 +2,14 @@
 
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
-import { Play, Pause, Volume2, VolumeX, ExternalLink } from 'lucide-react';
-
-const PLACEHOLDER_VIDEO_URL = '/videos/showcase.mp4';
-const FALLBACK_POSTER_URL = '/images/forge-studio-canvas.png';
+import { ExternalLink, Terminal, Cpu, GitFork, Layers, CheckCircle2 } from 'lucide-react';
 
 export default function VideoShowcaseSection() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const progressBarRef = useRef<HTMLDivElement>(null);
 
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
-  const [activeTab, setActiveTab] = useState<'video' | 'canvas' | 'grid'>('video');
+  const [activeTab, setActiveTab] = useState<'grid' | 'canvas' | 'telemetry'>('grid');
+  const [userSelectedTab, setUserSelectedTab] = useState<boolean>(false);
+  const userOverrideTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Master scroll progress for Section 3 pinning & generous scroll runway
   const { scrollYProgress } = useScroll({
@@ -22,98 +17,79 @@ export default function VideoShowcaseSection() {
     offset: ['start start', 'end end'],
   });
 
-  // Automatically sequence the 3 tabs as user scrolls through Section 3
+  // Automatically sequence the 3 tabs as user scrolls through Section 3 (unless user explicitly clicked a tab)
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    if (latest < 0.35) {
-      setActiveTab('video');
+    if (userSelectedTab) return;
+    if (latest < 0.36) {
+      setActiveTab('grid');
     } else if (latest < 0.70) {
       setActiveTab('canvas');
     } else {
-      setActiveTab('grid');
+      setActiveTab('telemetry');
     }
   });
 
+  const handleTabClick = (tab: 'grid' | 'canvas' | 'telemetry') => {
+    setActiveTab(tab);
+    setUserSelectedTab(true);
+    if (userOverrideTimeout.current) clearTimeout(userOverrideTimeout.current);
+    userOverrideTimeout.current = setTimeout(() => {
+      setUserSelectedTab(false);
+    }, 6000);
+  };
+
   // Smooth 3D perspective scale & subtle elevation
-  const scale = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.94, 1, 1, 0.96]);
-  const rotateX = useTransform(scrollYProgress, [0, 0.12, 0.88, 1], [6, 0, 0, -4]);
+  const scale = useTransform(scrollYProgress, [0, 0.12, 0.88, 1], [0.95, 1, 1, 0.96]);
+  const rotateX = useTransform(scrollYProgress, [0, 0.12, 0.88, 1], [4, 0, 0, -3]);
   const opacity = useTransform(scrollYProgress, [0, 0.08, 0.92, 1], [0.85, 1, 1, 0.85]);
-
-  const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (videoRef.current.paused) {
-      videoRef.current.play().catch(() => {});
-      setIsPlaying(true);
-    } else {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    }
-  };
-
-  const toggleMute = () => {
-    if (!videoRef.current) return;
-    videoRef.current.muted = !isMuted;
-    setIsMuted(!isMuted);
-  };
-
-  // Direct DOM style update on progress bar (Zero React re-renders during playback)
-  const handleTimeUpdate = () => {
-    if (!videoRef.current || !progressBarRef.current) return;
-    const duration = videoRef.current.duration;
-    if (!duration || isNaN(duration)) return;
-    const percent = (videoRef.current.currentTime / duration) * 100;
-    progressBarRef.current.style.width = `${percent}%`;
-  };
-
-  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!videoRef.current) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const newProgress = Math.max(0, Math.min(1, clickX / rect.width));
-    const totalDuration = videoRef.current.duration || 45;
-    videoRef.current.currentTime = newProgress * totalDuration;
-    if (progressBarRef.current) {
-      progressBarRef.current.style.width = `${newProgress * 100}%`;
-    }
-  };
 
   return (
     <section
       id="process"
       ref={containerRef}
-      className="relative z-10 w-full bg-[#F6F5F2] h-[240vh] border-t border-black/10"
+      className="relative z-10 w-full bg-[#F6F5F2] h-[260vh] border-t border-black/10"
     >
       {/* Subtle Architectural Blueprint Dot Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#0000000a_1px,transparent_1px)] [background-size:28px_28px] pointer-events-none" />
 
-      {/* Sticky Viewport Stage: Locks the showcase in view to provide generous scroll time */}
+      {/* Sticky Viewport Stage: Centered with comfortable vertical margins */}
       <div 
-        className="sticky top-0 h-screen w-full flex flex-col justify-center items-center px-4 sm:px-8 lg:px-14 overflow-hidden select-none"
+        className="sticky top-0 h-screen w-full flex flex-col justify-center items-center px-4 sm:px-8 lg:px-14 overflow-hidden select-none pt-12 sm:pt-14 pb-6"
         style={{ perspective: '1200px' }}
       >
         
         {/* Animated Centered Showcase Stage with 3D Physics */}
         <motion.div
           style={{ scale, opacity, rotateX, transformStyle: 'preserve-3d' }}
-          className="w-full max-w-[1240px] mx-auto relative z-10 flex flex-col items-center will-change-transform"
+          className="w-full max-w-[1260px] mx-auto relative z-10 flex flex-col items-center will-change-transform"
         >
           
           {/* =====================================================================
-              SECTION 3 MASTHEAD
+              SECTION 3 MASTHEAD (Clean Editorial Hierarchy)
               ===================================================================== */}
-          <div className="w-full mb-5 sm:mb-7 flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-black/10">
+          <div className="w-full mb-5 sm:mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-black/10">
             <div className="space-y-1">
               <div className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-[#FF3B1D] font-semibold flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B1D] animate-ping" />
-                <span>03 // THE WORKBENCH & DEMO SHOWCASE</span>
+                <span>03 // FLAGSHIP SYSTEM ARCHITECTURE</span>
               </div>
-              <h2 className="font-sans font-medium text-2xl sm:text-3xl lg:text-4xl tracking-tight text-[#111111]">
-                Forge Studio ADE Workbench
+              <h2 className="font-sans font-bold text-2xl sm:text-3xl lg:text-4xl tracking-tight text-[#111111]">
+                Forge Studio (ForgeADE)
               </h2>
+              <p className="font-mono text-[11px] sm:text-xs text-neutral-500 uppercase tracking-wider">
+                Multi-Agent Parallel IDE &amp; CLI Orchestration Engine
+              </p>
             </div>
 
-            <div className="flex items-center gap-4">
-              <p className="font-sans text-neutral-600 text-xs sm:text-sm max-w-sm font-normal">
-                Autonomous agent visual workbench with deterministic PTY sandboxes and real-time state telemetry.
+            <div className="flex flex-col sm:items-end gap-2 shrink-0">
+              <div className="flex flex-wrap items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-neutral-700">
+                <span className="px-2 py-0.5 rounded bg-black/5 border border-black/10">REACT</span>
+                <span className="px-2 py-0.5 rounded bg-black/5 border border-black/10">CONPTY</span>
+                <span className="px-2 py-0.5 rounded bg-black/5 border border-black/10">XTERM.JS</span>
+                <span className="px-2 py-0.5 rounded bg-black/5 border border-black/10">GIT WORKTREES</span>
+              </div>
+              <p className="font-sans text-neutral-600 text-xs sm:text-[13px] max-w-md font-normal sm:text-right leading-relaxed">
+                Desktop orchestration runtime running multiple autonomous AI coding agents in isolated Git worktrees with zero merge collisions.
               </p>
             </div>
           </div>
@@ -121,36 +97,44 @@ export default function VideoShowcaseSection() {
           {/* =====================================================================
               CENTERPIECE macOS SHOWCASE WINDOW
               ===================================================================== */}
-          <div className="w-full aspect-[16/9] max-h-[70vh] min-h-[380px] sm:min-h-[430px] bg-[#0A0D15] rounded-2xl border border-black/20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col relative">
+          <div className="w-full aspect-[16/9.6] max-h-[58vh] min-h-[360px] sm:min-h-[420px] bg-[#0A0D15] rounded-2xl border border-black/20 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col relative">
             
             {/* Top Clean Control Bar */}
-            <div className="h-12 sm:h-14 bg-[#07090F] border-b border-white/10 px-4 sm:px-6 flex items-center justify-between select-none shrink-0 z-20">
-              {/* Left Label: Clean DEMO */}
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#FF3B1D] animate-pulse" />
-                <span className="font-mono text-xs sm:text-[13px] font-bold uppercase tracking-[0.20em] text-white">
-                  DEMO
-                </span>
+            <div className="h-12 sm:h-13 bg-[#080B12] border-b border-white/10 px-4 sm:px-6 flex items-center justify-between select-none shrink-0 z-20">
+              
+              {/* Left macOS Window Traffic Dots & System Label */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]/85 inline-block" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]/85 inline-block" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]/85 inline-block" />
+                </div>
+                <div className="hidden md:flex items-center gap-2 pl-2 border-l border-white/10 font-mono text-[11px] text-white/50 tracking-wider">
+                  <span className="text-white/80 font-medium">FORGE_STUDIO</span>
+                  <span className="text-white/30">/</span>
+                  <span>v2.4_ADE</span>
+                </div>
               </div>
 
               {/* Spacious Spring-Animated View Switcher Tabs */}
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-[#05070C] p-1.5 rounded-xl border border-white/10 text-xs sm:text-[13px] font-mono select-none relative shadow-inner">
+              <div className="flex items-center gap-1 bg-[#04060A] p-1 rounded-xl border border-white/10 text-xs font-mono select-none relative shadow-inner">
                 {(
                   [
-                    { id: 'video', label: 'Demo Video' },
-                    { id: 'canvas', label: 'Canvas Graph' },
-                    { id: 'grid', label: 'Agent Grid' },
+                    { id: 'grid', label: 'Parallel Grid', icon: Layers },
+                    { id: 'canvas', label: 'DAG Canvas', icon: GitFork },
+                    { id: 'telemetry', label: 'Live Telemetry', icon: Terminal },
                   ] as const
                 ).map((tab) => {
                   const isActive = activeTab === tab.id;
+                  const Icon = tab.icon;
                   return (
                     <button
                       key={tab.id}
                       type="button"
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`relative px-4 sm:px-5 py-1.5 sm:py-2 rounded-lg font-semibold transition-colors duration-200 cursor-pointer z-10 ${
+                      onClick={() => handleTabClick(tab.id)}
+                      className={`relative px-3 sm:px-4 py-1.5 rounded-lg text-xs font-mono transition-colors duration-200 cursor-pointer z-10 flex items-center gap-1.5 ${
                         isActive
-                          ? 'text-white font-bold'
+                          ? 'text-white font-semibold'
                           : 'text-neutral-400 hover:text-neutral-200'
                       }`}
                     >
@@ -158,102 +142,43 @@ export default function VideoShowcaseSection() {
                         <motion.div
                           layoutId="activeShowcaseTab"
                           transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                          className="absolute inset-0 bg-[#FF3B1D] rounded-lg shadow-sm -z-10"
+                          className="absolute inset-0 bg-white/15 border border-white/20 rounded-lg shadow-sm -z-10"
                         />
                       )}
-                      <span className="tracking-wider">{tab.label}</span>
+                      <Icon className="w-3.5 h-3.5" />
+                      <span className="tracking-wide uppercase text-[11px] sm:text-xs">{tab.label}</span>
                     </button>
                   );
                 })}
               </div>
 
-              {/* Right Link */}
+              {/* Right External Link */}
               <a
                 href="https://www.forgeapi.org/"
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-1.5 sm:gap-2 text-xs font-mono text-emerald-400 hover:underline transition-opacity hover:opacity-85"
               >
-                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="hidden sm:inline">forgeapi.org</span>
                 <ExternalLink size={13} />
               </a>
             </div>
 
-            {/* Video / Graphic Display Stage with AnimatePresence */}
+            {/* Display Stage with AnimatePresence */}
             <div className="relative flex-1 bg-[#05070C] overflow-hidden flex items-center justify-center">
               <AnimatePresence mode="wait">
-                {/* Active Tab: Demo Video */}
-                {activeTab === 'video' && (
-                  <motion.div
-                    key="tab-video"
-                    initial={{ opacity: 0, scale: 0.985 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.99 }}
-                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute inset-0 w-full h-full flex items-center justify-center"
-                  >
-                    <video
-                      ref={videoRef}
-                      src={PLACEHOLDER_VIDEO_URL}
-                      poster={FALLBACK_POSTER_URL}
-                      autoPlay
-                      loop
-                      muted={isMuted}
-                      playsInline
-                      preload="metadata"
-                      onTimeUpdate={handleTimeUpdate}
-                      className="w-full h-full object-cover"
-                    />
-
-                    {/* Center Play/Pause Click Handler */}
-                    <button
-                      type="button"
-                      onClick={togglePlay}
-                      aria-label={isPlaying ? 'Pause video' : 'Play video'}
-                      className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/10 hover:bg-black/25 transition-colors duration-200 group/playbtn cursor-pointer"
-                    >
-                      {!isPlaying && (
-                        <div className="w-16 h-16 rounded-full bg-[#FF3B1D] text-white flex items-center justify-center shadow-2xl transform scale-100 group-hover/playbtn:scale-105 transition-transform duration-200">
-                          <Play size={24} className="ml-1 fill-current" />
-                        </div>
-                      )}
-                    </button>
-                  </motion.div>
-                )}
-
-                {/* Active Tab: Canvas Graph */}
-                {activeTab === 'canvas' && (
-                  <motion.div
-                    key="tab-canvas"
-                    initial={{ opacity: 0, scale: 0.985 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.99 }}
-                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute inset-0 w-full h-full flex items-center justify-center bg-[#07090F]"
-                  >
-                    <img
-                      src="/images/forge-studio-canvas.png"
-                      alt="Forge Studio Multi-Agent Canvas"
-                      loading="lazy"
-                      className="w-full h-full object-cover object-top"
-                    />
-                    {/* Live Tech Overlay Badge */}
-                    <div className="absolute top-4 left-4 bg-black/75 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-white/90 flex items-center gap-2 pointer-events-none shadow-lg">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span>DAG WORKFLOW CANVAS &bull; LIVE EXECUTION GRAPH</span>
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* Active Tab: Agent Grid */}
+                
+                {/* =============================================================
+                    TAB 1: PARALLEL TERMINAL GRID
+                    ============================================================= */}
                 {activeTab === 'grid' && (
                   <motion.div
                     key="tab-grid"
-                    initial={{ opacity: 0, scale: 0.985 }}
+                    initial={{ opacity: 0, scale: 0.99 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.99 }}
-                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                     className="absolute inset-0 w-full h-full flex items-center justify-center bg-[#07090F]"
                   >
                     <img
@@ -262,67 +187,166 @@ export default function VideoShowcaseSection() {
                       loading="lazy"
                       className="w-full h-full object-cover object-top"
                     />
+                    
                     {/* Live Tech Overlay Badge */}
-                    <div className="absolute top-4 left-4 bg-black/75 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-white/90 flex items-center gap-2 pointer-events-none shadow-lg">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-                      <span>PARALLEL WORKTREE RUNTIME &bull; 8 PTY THREADS</span>
+                    <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-white/90 flex items-center gap-2 pointer-events-none shadow-xl">
+                      <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                      <span>PARALLEL WORKTREE RUNTIME &bull; 8 CONPTY THREADS</span>
+                    </div>
+
+                    <div className="absolute bottom-4 right-4 hidden sm:flex items-center gap-2 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-neutral-300 pointer-events-none">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                      <span>ZERO GIT MERGE CONFLICTS</span>
                     </div>
                   </motion.div>
                 )}
-              </AnimatePresence>
 
-              {/* Technical Corner Brackets */}
-              <div className="absolute top-3 left-3 w-3 h-3 border-t-2 border-l-2 border-white/70 pointer-events-none z-20" />
-              <div className="absolute top-3 right-3 w-3 h-3 border-t-2 border-r-2 border-white/70 pointer-events-none z-20" />
-              <div className="absolute bottom-3 left-3 w-3 h-3 border-b-2 border-l-2 border-white/70 pointer-events-none z-20" />
-              <div className="absolute bottom-3 right-3 w-3 h-3 border-b-2 border-r-2 border-white/70 pointer-events-none z-20" />
+                {/* =============================================================
+                    TAB 2: DAG WORKFLOW CANVAS
+                    ============================================================= */}
+                {activeTab === 'canvas' && (
+                  <motion.div
+                    key="tab-canvas"
+                    initial={{ opacity: 0, scale: 0.99 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.99 }}
+                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0 w-full h-full flex items-center justify-center bg-[#07090F]"
+                  >
+                    <img
+                      src="/images/forge-studio-canvas.png"
+                      alt="Forge Studio Multi-Agent Canvas"
+                      loading="lazy"
+                      className="w-full h-full object-cover object-top"
+                    />
+                    
+                    {/* Live Tech Overlay Badge */}
+                    <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-white/90 flex items-center gap-2 pointer-events-none shadow-xl">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span>DAG WORKFLOW CANVAS &bull; REAL-TIME AGENT DEPENDENCY GRAPH</span>
+                    </div>
+
+                    <div className="absolute bottom-4 right-4 hidden sm:flex items-center gap-2 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-neutral-300 pointer-events-none">
+                      <Cpu className="w-3 h-3 text-blue-400" />
+                      <span>DYNAMIC STATE ORCHESTRATION</span>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* =============================================================
+                    TAB 3: LIVE TERMINAL TELEMETRY & RUNTIME STREAM
+                    ============================================================= */}
+                {activeTab === 'telemetry' && (
+                  <motion.div
+                    key="tab-telemetry"
+                    initial={{ opacity: 0, scale: 0.99 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.99 }}
+                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0 w-full h-full bg-[#05070C] p-6 sm:p-8 flex flex-col justify-between font-mono text-xs overflow-hidden select-text"
+                  >
+                    {/* Terminal Header */}
+                    <div className="flex items-center justify-between pb-3 border-b border-white/10 text-white/50 text-[11px]">
+                      <div className="flex items-center gap-2">
+                        <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="text-white/80">pty-stream // session-4812</span>
+                        <span className="text-white/30">|</span>
+                        <span>pid: 28419</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-emerald-400 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                          <span>STREAMING 60 FPS</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Monospace Telemetry Logs */}
+                    <div className="flex-1 py-4 space-y-2 sm:space-y-2.5 overflow-hidden text-neutral-300 text-[11px] sm:text-xs leading-relaxed">
+                      <div className="text-neutral-500 font-mono">
+                        [09:42:01.004] <span className="text-blue-400">[SYSTEM]</span> ConPTY Multiplexer initialized on port :4812 (ConPTY / node-pty backend)
+                      </div>
+                      <div>
+                        [09:42:01.140] <span className="text-amber-400">[AGENT-01 // Claude Code]</span> Forking worktree sandbox to <code className="text-white/90 bg-white/10 px-1 py-0.5 rounded">.worktrees/auth-refactor</code>
+                      </div>
+                      <div>
+                        [09:42:01.320] <span className="text-emerald-400">[AGENT-02 // Antigravity]</span> Building SQLite HNSW vector index: 1,420 codebase symbols mapped in 38ms.
+                      </div>
+                      <div>
+                        [09:42:01.605] <span className="text-purple-400">[AGENT-03 // Codex]</span> Compiling Tailwind CSS design tokens and verifying TypeScript strict types.
+                      </div>
+                      <div className="text-neutral-400">
+                        [09:42:01.880] <span className="text-emerald-400">[GIT-WORKTREE]</span> Checking branch heads: 3 parallel worktrees verified. Zero lock collisions.
+                      </div>
+                      <div className="p-3 rounded-lg bg-white/5 border border-white/10 flex flex-wrap items-center justify-between gap-4 text-[11px] text-white">
+                        <div>
+                          <span className="text-white/50 block text-[9px] uppercase tracking-wider">Context Memory</span>
+                          <span className="text-emerald-400 font-bold">&lt; 200 Tokens</span> (Zero-token SQLite Graph)
+                        </div>
+                        <div>
+                          <span className="text-white/50 block text-[9px] uppercase tracking-wider">Parallel Panes</span>
+                          <span className="text-blue-400 font-bold">8 Active</span> (xterm.js GPU Canvas)
+                        </div>
+                        <div>
+                          <span className="text-white/50 block text-[9px] uppercase tracking-wider">Git Status</span>
+                          <span className="text-amber-400 font-bold">100% Collision-Free</span>
+                        </div>
+                        <div>
+                          <span className="text-white/50 block text-[9px] uppercase tracking-wider">PTY Latency</span>
+                          <span className="text-emerald-400 font-bold">12ms Roundtrip</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-white/90 pt-1">
+                        <span className="text-emerald-400">zen-tech@forge:~$</span>
+                        <span>agy stream --session session-4812 --verify-build</span>
+                        <span className="w-2 h-4 bg-[#FF3B1D] inline-block animate-pulse ml-0.5" />
+                      </div>
+                    </div>
+
+                    {/* Bottom Status pill */}
+                    <div className="pt-2 border-t border-white/10 text-[10px] text-white/40 flex items-center justify-between">
+                      <span>RUNNING IN ELECTRON WORKBENCH HARNESS</span>
+                      <span className="text-white/60">PRESS ESC TO DETACH PTY</span>
+                    </div>
+
+                  </motion.div>
+                )}
+
+              </AnimatePresence>
             </div>
 
-            {/* Bottom Status / Audio Controls Bar */}
-            <div className="h-11 sm:h-12 bg-[#0A0D15] border-t border-white/10 px-4 sm:px-6 flex items-center justify-between gap-4 select-none shrink-0 z-20">
-              <div className="flex items-center gap-3 shrink-0">
-                <button
-                  type="button"
-                  onClick={togglePlay}
-                  aria-label={isPlaying ? 'Pause' : 'Play'}
-                  className="h-7 w-7 rounded-full bg-white/10 hover:bg-[#FF3B1D] text-white flex items-center justify-center transition-colors duration-200 cursor-pointer"
-                >
-                  {isPlaying ? <Pause size={12} /> : <Play size={12} className="ml-0.5 fill-current" />}
-                </button>
-                <span className="font-mono text-[10px] sm:text-[11px] text-white/70 tracking-wider hidden sm:inline">
-                  {activeTab === 'video'
-                    ? 'FORGE STUDIO PREVIEW'
+            {/* Bottom Status & Engineering Telemetry Bar */}
+            <div className="h-11 sm:h-12 bg-[#080B12] border-t border-white/10 px-4 sm:px-6 flex items-center justify-between gap-4 select-none shrink-0 z-20 font-mono text-[10px] sm:text-[11px]">
+              
+              {/* Left Indicator */}
+              <div className="flex items-center gap-2.5 text-white/80">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="font-semibold tracking-wide">
+                  {activeTab === 'grid'
+                    ? '8 PARALLEL PTY THREADS'
                     : activeTab === 'canvas'
-                    ? 'CANVAS GRAPH ACTIVE'
-                    : 'AGENT GRID ACTIVE'}
+                    ? 'DAG AGENT GRAPH ACTIVE'
+                    : 'TELEMETRY STREAM CONNECTED'}
+                </span>
+                <span className="text-white/20 hidden sm:inline">|</span>
+                <span className="text-white/50 hidden sm:inline">.worktrees/agent-01</span>
+              </div>
+
+              {/* Center Tech Note */}
+              <div className="hidden lg:flex items-center gap-2 text-white/50">
+                <span>GPU-ACCELERATED XTERM.JS RENDERING</span>
+                <span className="text-white/20">&bull;</span>
+                <span className="text-emerald-400">60 FPS</span>
+              </div>
+
+              {/* Right Worktree Status */}
+              <div className="flex items-center gap-2 text-white/70">
+                <span className="text-neutral-400 hidden md:inline">GIT WORKTREE ISOLATION:</span>
+                <span className="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 font-semibold">
+                  100% COLLISION FREE
                 </span>
               </div>
 
-              {/* Zero-Re-render Interactive Video Scrub Bar */}
-              <div
-                onClick={handleSeek}
-                role="progressbar"
-                aria-label="Video timeline scrubber"
-                className="flex-1 max-w-[480px] h-1.5 bg-white/10 rounded-full overflow-hidden cursor-pointer relative group/scrub py-1"
-              >
-                <div className="w-full h-full bg-white/15 rounded-full overflow-hidden relative">
-                  <div
-                    ref={progressBarRef}
-                    className="h-full bg-[#FF3B1D] rounded-full transition-[width] duration-100 ease-linear w-0"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 shrink-0">
-                <button
-                  type="button"
-                  onClick={toggleMute}
-                  aria-label={isMuted ? 'Unmute' : 'Mute'}
-                  className="h-7 w-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors duration-200 cursor-pointer"
-                >
-                  {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
-                </button>
-              </div>
             </div>
 
           </div>
@@ -333,4 +357,3 @@ export default function VideoShowcaseSection() {
     </section>
   );
 }
-
