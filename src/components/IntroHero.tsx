@@ -109,12 +109,12 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
       setStage('expand');
     }, 1050);
 
-    // 5. Complete intro and reveal headline wave at 1600ms
+    // 5. Complete intro and reveal headline wave at 1550ms
     const t4 = setTimeout(() => {
       if (!isMounted) return;
       setStage('ready');
       if (onStateChangeRef.current) onStateChangeRef.current(true);
-    }, 1600);
+    }, 1550);
 
     return () => {
       isMounted = false;
@@ -130,7 +130,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
       
       {/* 🖼️ 1. FULL-SCREEN BACKGROUND HERO IMAGE */}
       <div
-        className={`absolute inset-0 z-0 w-full h-full overflow-hidden pointer-events-none transition-opacity duration-700 ${
+        className={`absolute inset-0 z-0 w-full h-full overflow-hidden pointer-events-none transition-opacity duration-600 ease-out ${
           stage === 'expand' || stage === 'ready' ? 'opacity-100' : 'opacity-0'
         }`}
       >
@@ -147,14 +147,14 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
           <motion.div
             key="loader-screen"
             initial={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }}
-            className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden px-4 ${
+            exit={{ opacity: 0, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] } }}
+            className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden px-4 transition-colors duration-500 ${
               stage === 'expand' ? 'bg-transparent pointer-events-none' : 'bg-[#EAE8E3]'
             }`}
           >
             {/* 🌌 Atmospheric Halftone Dither Texture Layer */}
             <div
-              className={`absolute inset-0 z-0 pointer-events-none transition-opacity duration-700 ${
+              className={`absolute inset-0 z-0 pointer-events-none transition-opacity duration-500 ${
                 stage === 'expand' ? 'opacity-0' : 'opacity-15'
               }`}
               style={{
@@ -172,11 +172,11 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
               {/* Left Wordmark: 'SO' */}
               <motion.span
                 animate={{
-                  x: stage === 'expand' ? '-110vw' : 0,
+                  x: stage === 'expand' ? '-100vw' : 0,
                   opacity: stage === 'expand' ? 0 : 1,
                 }}
                 transition={{
-                  duration: stage === 'expand' ? 0.75 : 0.35,
+                  duration: stage === 'expand' ? 0.65 : 0.35,
                   ease: [0.16, 1, 0.3, 1],
                 }}
                 className="shrink-0 pr-2 sm:pr-4 will-change-transform"
@@ -188,11 +188,11 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
               <motion.div
                 initial={false}
                 animate={{
-                  scale: stage === 'expand' ? 10 : 1,
+                  scale: stage === 'expand' ? 8 : 1,
                   opacity: stage === 'expand' ? 0 : 1,
                 }}
                 transition={{
-                  duration: stage === 'expand' ? 0.85 : 0.35,
+                  duration: stage === 'expand' ? 0.7 : 0.35,
                   ease: [0.16, 1, 0.3, 1],
                 }}
                 className="relative shrink-0 flex items-center justify-center will-change-transform"
@@ -276,11 +276,11 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
               {/* Right Wordmark: 'AM' */}
               <motion.span
                 animate={{
-                  x: stage === 'expand' ? '110vw' : 0,
+                  x: stage === 'expand' ? '100vw' : 0,
                   opacity: stage === 'expand' ? 0 : 1,
                 }}
                 transition={{
-                  duration: stage === 'expand' ? 0.75 : 0.35,
+                  duration: stage === 'expand' ? 0.65 : 0.35,
                   ease: [0.16, 1, 0.3, 1],
                 }}
                 className="shrink-0 pl-2 sm:pl-4 will-change-transform"
@@ -308,7 +308,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
         )}
       </AnimatePresence>
 
-      {/* 🌟 3. DYNAMIC DIFFERENCE BLEND HEADLINE (WHITE OVER HOODIE, NAVY BLUE OVER SKY) */}
+      {/* 🌟 3. DYNAMIC DIFFERENCE BLEND HEADLINE */}
       <div
         className="relative z-10 w-full h-full flex flex-col justify-end items-center pb-12 sm:pb-16 md:pb-20 px-4 sm:px-8 pointer-events-none mix-blend-difference text-white"
         style={{ alignItems: 'center' }}
