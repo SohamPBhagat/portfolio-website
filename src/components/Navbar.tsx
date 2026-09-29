@@ -9,29 +9,18 @@ interface NavbarProps {
 }
 
 export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
-  const [isScrolledVisible, setIsScrolledVisible] = useState(true);
   const [isScrolledPastTop, setIsScrolledPastTop] = useState(false);
 
-  // Direction-aware scroll detection throttled with requestAnimationFrame
+  // Track scroll position to fade out center tabs & right CTA while keeping SOHAM pinned
   useEffect(() => {
-    let lastY = window.scrollY;
     let ticking = false;
-    const threshold = 8;
-    const topZone = 40;
+    const topZone = 50;
 
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const y = window.scrollY;
-          const delta = y - lastY;
-
           setIsScrolledPastTop(y > topZone);
-
-          if (Math.abs(delta) >= threshold) {
-            lastY = y;
-            const nextVisible = y <= topZone || delta < 0;
-            setIsScrolledVisible((prev) => (prev !== nextVisible ? nextVisible : prev));
-          }
           ticking = false;
         });
         ticking = true;
@@ -50,50 +39,42 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
     { name: 'Contact', href: '#contact' },
   ];
 
-  const shouldShow = isScrolledVisible && isVisibleInHero;
-
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-        shouldShow ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-      } pt-4 sm:pt-6 pb-2 px-6 sm:px-10 lg:px-14 xl:px-18 pointer-events-none flex justify-center`}
+      className={`fixed top-0 left-0 right-0 z-40 transition-opacity duration-500 ${
+        isVisibleInHero ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      } pt-5 sm:pt-6 pb-2 px-6 sm:px-10 lg:px-14 xl:px-18 pointer-events-none flex justify-center`}
     >
-      {/* Precision Awwwards-Style Architectural Header */}
-      <div
-        className={`w-full max-w-[1520px] flex items-center justify-between transition-all duration-500 pointer-events-auto ${
-          isScrolledPastTop
-            ? 'bg-[#0A0D14]/90 backdrop-blur-xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.6)] rounded-full px-6 py-3 text-white'
-            : 'bg-transparent text-white px-2 py-1'
-        }`}
-      >
+      {/* 100% Transparent Full-Width Architectural Grid Header */}
+      <div className="w-full max-w-[1520px] flex items-center justify-between relative bg-transparent pointer-events-auto">
         
-        {/* Left: Brand Identity + Micro Status Pill */}
-        <div className="flex items-center gap-4">
+        {/* Left: SOHAM Brandmark (Always pinned and visible on scroll) */}
+        <div className="flex items-center">
           <a
             href="#hero"
             onClick={(e) => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="font-sans font-black text-sm sm:text-base tracking-[0.22em] uppercase text-white hover:text-[#FF3B1D] transition-colors select-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+            className="font-sans font-black text-base sm:text-lg tracking-[0.24em] uppercase text-white hover:text-[#FF3B1D] transition-colors select-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] leading-none py-1"
           >
             SOHAM
           </a>
-
-          {/* Faint Live Status (Hidden on small mobile) */}
-          <div className="hidden lg:flex items-center gap-2 font-mono text-[10px] tracking-[0.20em] uppercase text-neutral-300 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] border-l border-white/20 pl-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></span>
-            <span>AVAILABLE FOR WORK</span>
-          </div>
         </div>
 
-        {/* Center: Clean Monospaced Navigation Links */}
-        <nav className="hidden md:flex items-center gap-7 lg:gap-9 absolute left-1/2 -translate-x-1/2 pointer-events-auto">
+        {/* Center: Monospaced Navigation Links (Smoothly fades out on scroll down) */}
+        <nav
+          className={`hidden md:flex items-center gap-7 lg:gap-9 absolute left-1/2 -translate-x-1/2 transition-all duration-400 pointer-events-auto ${
+            isScrolledPastTop
+              ? 'opacity-0 -translate-y-3 pointer-events-none'
+              : 'opacity-100 translate-y-0'
+          }`}
+        >
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
-              className="relative py-1 text-xs font-mono uppercase tracking-[0.18em] text-white/80 hover:text-white transition-colors group select-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+              className="relative py-1 text-xs font-mono uppercase tracking-[0.18em] text-white/80 hover:text-white transition-colors group select-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]"
             >
               <span>{link.name}</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#FF3B1D] transition-all duration-300 group-hover:w-full"></span>
@@ -101,17 +82,28 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
           ))}
         </nav>
 
-        {/* Right: Kinetic Pill CTA Button */}
-        <div className="flex items-center">
+        {/* Right: Kinetic Collaborate Pill Button (Sliding badge from LEFT to RIGHT, fades out on scroll) */}
+        <div
+          className={`flex items-center transition-all duration-400 ${
+            isScrolledPastTop
+              ? 'opacity-0 translate-y-[-10px] pointer-events-none'
+              : 'opacity-100 translate-y-0'
+          }`}
+        >
           <a
             href={portfolioData.personal.linkedin}
             target="_blank"
             rel="noreferrer"
-            className="group relative inline-flex items-center rounded-full h-8 sm:h-9 px-4 sm:px-5 bg-[#FF3B1D] hover:bg-[#E02E12] text-white text-[11px] sm:text-xs font-semibold tracking-wider uppercase transition-all duration-300 shadow-[0_4px_16px_rgba(255,59,29,0.3)] cursor-pointer select-none"
+            className="group relative inline-flex items-center rounded-full h-10 sm:h-11 w-[155px] sm:w-[170px] overflow-hidden cursor-pointer bg-[#0A0D14] hover:bg-black text-[#F4E3B2] border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.5)] select-none transition-colors duration-500"
           >
-            <span className="flex items-center gap-1.5">
-              <span>Collaborate</span>
-              <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            {/* The Sliding Circle Badge (Starts on LEFT, slides to RIGHT on hover) */}
+            <div className="absolute top-1/2 -translate-y-1/2 left-1.5 w-7 h-7 sm:w-8 sm:h-8 bg-white/15 text-[#F4E3B2] group-hover:bg-[#F4E3B2] group-hover:text-[#0A0D14] rounded-full flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:left-[calc(100%-34px)] sm:group-hover:left-[calc(100%-38px)] group-hover:rotate-45 shadow-sm pointer-events-none">
+              <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-500" />
+            </div>
+
+            {/* The Text Label (Padding shifts on hover as badge slides across) */}
+            <span className="w-full text-center block whitespace-nowrap text-xs sm:text-[12px] font-semibold tracking-wide transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] pl-7 pr-2.5 group-hover:pl-2.5 group-hover:pr-7">
+              Collaborate
             </span>
           </a>
         </div>
