@@ -154,8 +154,22 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
               stage === 'expand' ? 'bg-transparent pointer-events-none' : 'bg-[#EAE8E3]'
             }`}
           >
+            {/* 🌌 Atmospheric Halftone Dither Texture Layer (Blended with off-white paper) */}
+            <div
+              className={`absolute inset-0 z-0 pointer-events-none transition-opacity duration-700 ${
+                stage === 'expand' ? 'opacity-0' : 'opacity-15'
+              }`}
+              style={{
+                backgroundImage: `url('/images/preloader-bg.jpg')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                mixBlendMode: 'multiply',
+                filter: 'invert(1)',
+              }}
+            />
+
             {/* 2-1-2 Symmetric Flex Container: SO + [H] + AM */}
-            <div className="flex items-center justify-center font-sans font-black text-[clamp(52px,12vw,160px)] text-[#111111] leading-none tracking-[-0.04em] uppercase select-none">
+            <div className="relative z-10 flex items-center justify-center font-sans font-black text-[clamp(52px,12vw,160px)] text-[#111111] leading-none tracking-[-0.04em] uppercase select-none">
               
               {/* Left Wordmark: 'SO' */}
               <motion.span
