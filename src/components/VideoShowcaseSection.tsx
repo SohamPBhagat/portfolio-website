@@ -284,86 +284,50 @@ export default function VideoShowcaseSection() {
               </AnimatePresence>
             </div>
 
-            {/* Bottom Status & Controls Bar */}
-            <div className="h-11 sm:h-12 bg-[#080B12] border-t border-white/10 px-4 sm:px-6 flex items-center justify-between gap-4 select-none shrink-0 z-20 font-mono text-[10px] sm:text-[11px]">
-              
-              {activeTab === 'video' ? (
-                <>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <button
-                      type="button"
-                      onClick={togglePlay}
-                      aria-label={isPlaying ? 'Pause' : 'Play'}
-                      className="h-7 w-7 rounded-full bg-white/10 hover:bg-[#FF3B1D] text-white flex items-center justify-center transition-colors duration-200 cursor-pointer"
-                    >
-                      {isPlaying ? <Pause size={12} /> : <Play size={12} className="ml-0.5 fill-current" />}
-                    </button>
-                    <span className="font-mono text-[10px] sm:text-[11px] text-white/80 tracking-wider">
-                      3D LAUNCH REEL (10s)
-                    </span>
-                  </div>
-
-                  {/* Interactive Seek Scrubber */}
-                  <div
-                    onClick={handleSeek}
-                    role="progressbar"
-                    aria-label="Video scrubber"
-                    className="flex-1 max-w-[440px] h-1.5 bg-white/10 rounded-full overflow-hidden cursor-pointer relative group/scrub py-1"
+            {/* Bottom Media Controls Bar (Only visible when 3D Product Reel is active, zero clutter on Grid & Canvas) */}
+            {activeTab === 'video' && (
+              <div className="h-11 sm:h-12 bg-[#080B12] border-t border-white/10 px-4 sm:px-6 flex items-center justify-between gap-4 select-none shrink-0 z-20 font-mono text-[10px] sm:text-[11px]">
+                <div className="flex items-center gap-3 shrink-0">
+                  <button
+                    type="button"
+                    onClick={togglePlay}
+                    aria-label={isPlaying ? 'Pause' : 'Play'}
+                    className="h-7 w-7 rounded-full bg-white/10 hover:bg-[#FF3B1D] text-white flex items-center justify-center transition-colors duration-200 cursor-pointer"
                   >
-                    <div className="w-full h-full bg-white/15 rounded-full overflow-hidden relative">
-                      <div
-                        ref={progressBarRef}
-                        className="h-full bg-[#FF3B1D] rounded-full transition-[width] duration-100 ease-linear w-0"
-                      />
-                    </div>
-                  </div>
+                    {isPlaying ? <Pause size={12} /> : <Play size={12} className="ml-0.5 fill-current" />}
+                  </button>
+                  <span className="font-mono text-[10px] sm:text-[11px] text-white/70 tracking-wider">
+                    3D PRODUCT REEL
+                  </span>
+                </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
-                    <button
-                      type="button"
-                      onClick={toggleMute}
-                      aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
-                      className="h-7 w-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors duration-200 cursor-pointer"
-                    >
-                      {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
-                    </button>
-                    <span className="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 font-semibold hidden md:inline">
-                      100% COLLISION FREE
-                    </span>
+                {/* Interactive Seek Scrubber */}
+                <div
+                  onClick={handleSeek}
+                  role="progressbar"
+                  aria-label="Video scrubber"
+                  className="flex-1 max-w-[480px] h-1.5 bg-white/10 rounded-full overflow-hidden cursor-pointer relative group/scrub py-1"
+                >
+                  <div className="w-full h-full bg-white/15 rounded-full overflow-hidden relative">
+                    <div
+                      ref={progressBarRef}
+                      className="h-full bg-[#FF3B1D] rounded-full transition-[width] duration-100 ease-linear w-0"
+                    />
                   </div>
-                </>
-              ) : (
-                <>
-                  {/* Left Indicator */}
-                  <div className="flex items-center gap-2.5 text-white/80">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="font-semibold tracking-wide">
-                      {activeTab === 'grid'
-                        ? '6 PARALLEL PTY THREADS'
-                        : 'DAG AGENT GRAPH ACTIVE'}
-                    </span>
-                    <span className="text-white/20 hidden sm:inline">|</span>
-                    <span className="text-white/50 hidden sm:inline">.worktrees/agent-01..06</span>
-                  </div>
+                </div>
 
-                  {/* Center Tech Note */}
-                  <div className="hidden lg:flex items-center gap-2 text-white/50">
-                    <span>GPU-ACCELERATED XTERM.JS RENDERING</span>
-                    <span className="text-white/20">&bull;</span>
-                    <span className="text-emerald-400">60 FPS</span>
-                  </div>
-
-                  {/* Right Worktree Status */}
-                  <div className="flex items-center gap-2 text-white/70">
-                    <span className="text-neutral-400 hidden md:inline">GIT WORKTREE ISOLATION:</span>
-                    <span className="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 font-semibold">
-                      100% COLLISION FREE
-                    </span>
-                  </div>
-                </>
-              )}
-
-            </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <button
+                    type="button"
+                    onClick={toggleMute}
+                    aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
+                    className="h-7 w-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors duration-200 cursor-pointer"
+                  >
+                    {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+                  </button>
+                </div>
+              </div>
+            )}
 
           </div>
 

@@ -55,7 +55,7 @@ export const portfolioData: PortfolioData = {
     isAvailable: true,
     location: 'Pune, Maharashtra, India • Open to Remote',
     email: 'soham.ai.research@gmail.com',
-    github: 'https://github.com',
+    github: 'https://github.com/SohamPBhagat',
     linkedin: 'https://www.linkedin.com/in/soham-bhagat-0132b33a0/',
     kaggle: 'https://kaggle.com',
     university: 'Savitribai Phule Pune University (SPPU), Department of Technology',
@@ -156,6 +156,29 @@ export const portfolioData: PortfolioData = {
       ],
       technologies: ['HyperFrames', 'Remotion', 'GSAP', 'FFmpeg', 'Node.js', 'Whisper'],
       githubUrl: 'https://github.com/example/hyperframes-agent',
+      featured: true
+    },
+    {
+      id: 'broadcast-telemetry-hud',
+      title: 'Broadcast Design Telemetry Dashboard: 3D Globe & Regional Intelligence HUD',
+      category: 'Video & Motion Eng',
+      tagline: 'Interactive 3D WebGL globe, regional radar telemetry, and real-time AI news/market intelligence feed.',
+      description: 'A sci-fi broadcast telemetry interface featuring real-time 3D globe visualization, regional radar target locking, simulated audio synthesizer, and multi-provider AI intelligence gateway.',
+      problem: 'Real-time broadcast graphics and situation-room interfaces require high-performance rendering of planetary data and interactive radar telemetry without UI lag.',
+      solution: 'Architected with Three.js, Three-Globe, D3-Geo projections, Web Audio API, and custom CRT scanline shaders with responsive country telemetry switching.',
+      architectureDetails: [
+        '3D WebGL globe rendering with satellite orbits, atmosphere glow, and country hover detection',
+        'Custom regional radar telemetry panels and audio synthesizer generating realistic HUD beeps and locks',
+        'AI Inference Gateway with fallback simulation mode supporting OpenAI and Anthropic endpoints'
+      ],
+      metrics: [
+        { label: 'Frame Rate', value: '60 FPS WebGL' },
+        { label: 'Coverage', value: '190+ Countries' },
+        { label: 'Audio Engine', value: 'Web Audio API' }
+      ],
+      technologies: ['React 19', 'TypeScript', 'Three.js', 'Three-Globe', 'D3-Geo', 'Tailwind CSS', 'Vite'],
+      githubUrl: 'https://github.com/SohamPBhagat/Broadcast-Design-Telemetry-Dashboard',
+      liveDemoUrl: 'https://broadcast-design-telemetry-dashboard.vercel.app',
       featured: true
     }
   ]
