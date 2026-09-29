@@ -13,21 +13,19 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
   // 'opening' -> off-white background with "SO [H portal] AM" (Eye Video active in H)
   // 'strobe'  -> Glitch tensor lattice active in H
   // 'expand'  -> soham.png active in H, expanding outward to fullscreen, SO & AM slide out
-  // 'ready'   -> Fullscreen hero active, headline letters pop up with randomized wave
+  // 'ready'   -> Fullscreen hero active, monumental quote letters pop up in randomized wave
   const [stage, setStage] = useState<'opening' | 'strobe' | 'expand' | 'ready'>('opening');
   const [activeMediaIdx, setActiveMediaIdx] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Concept: Clean, high-impact 2-line headline engineered for presence and clarity
+  // Authoritative, monumental 2-line statement of craft & standards
   const headlineLines = useMemo(
     () => [
-      "ENGINEERING THE NEXT ERA",
-      "OF AUTONOMOUS AGENTS."
+      "WHERE MATHEMATICAL RIGOR",
+      "MEETS FLAWLESS EXECUTION."
     ],
     []
   );
-
-  const sublineText = "SYSTEM DESIGN · HIGH-THROUGHPUT RUNTIMES · ADAPTIVE WORKFLOWS";
 
   // Generate deterministic randomized character shuffle order for the pop-up wave
   const charDelays = useMemo(() => {
@@ -141,6 +139,9 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
           alt="Soham Bhagat"
           className="w-full h-full object-cover object-[center_16%] sm:object-[center_18%] brightness-100 contrast-105"
         />
+
+        {/* 🌓 Subtle Gradient Scrim at bottom to ensure 100% contrast & legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none" />
       </div>
 
       {/* 🎬 2. SYMMETRIC 'SO' [H PORTAL] 'AM' PRELOADER */}
@@ -154,7 +155,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
               stage === 'expand' ? 'bg-transparent pointer-events-none' : 'bg-[#EAE8E3]'
             }`}
           >
-            {/* 🌌 Atmospheric Halftone Dither Texture Layer (Blended with off-white paper) */}
+            {/* 🌌 Atmospheric Halftone Dither Texture Layer */}
             <div
               className={`absolute inset-0 z-0 pointer-events-none transition-opacity duration-700 ${
                 stage === 'expand' ? 'opacity-0' : 'opacity-15'
@@ -310,23 +311,23 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
         )}
       </AnimatePresence>
 
-      {/* 🌟 3. NBNZIA HEADLINE: DYNAMIC DIFFERENCE BLEND */}
+      {/* 🌟 3. MONUMENTAL HEADLINE: CRISP PLATINUM WHITE WITH LUXURIOUS BREATHING ROOM */}
       <div
-        className="relative z-10 w-full h-full flex flex-col justify-end items-center pb-12 sm:pb-16 md:pb-20 px-4 pointer-events-none mix-blend-difference text-white"
+        className="relative z-10 w-full h-full flex flex-col justify-end items-center pb-14 sm:pb-18 md:pb-22 px-4 pointer-events-none text-white"
         style={{ alignItems: 'center' }}
       >
         
-        {/* The 2-Line High-Impact Statement + Subline Tag */}
+        {/* The 2-Line High-Impact Statement */}
         <div
           className="w-full flex flex-col items-center select-none pointer-events-auto text-center"
           style={{ width: '100%', maxWidth: '1440px', marginInline: 'auto' }}
         >
           {/* 2-Line Kinetic Headline */}
-          <div className="w-full flex flex-col items-center space-y-1 sm:space-y-2">
+          <div className="w-full flex flex-col items-center space-y-1.5 sm:space-y-2.5">
             {preparedHeadline.map((lineWords, lineIdx) => (
               <div
                 key={lineIdx}
-                className="w-full flex flex-row flex-wrap justify-center items-center gap-x-[0.34em] sm:gap-x-[0.38em]"
+                className="w-full flex flex-row flex-wrap justify-center items-center gap-x-[0.30em] sm:gap-x-[0.36em]"
               >
                 {lineWords.map((w, wordIdx) => (
                   <span
@@ -349,7 +350,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
                             delay: stage === 'ready' ? l.delay : 0,
                             ease: [0.16, 1, 0.3, 1],
                           }}
-                          className="inline-block font-sans font-extrabold uppercase text-[clamp(26px,4.5vw,68px)] leading-[0.98] tracking-[-0.03em] text-white will-change-transform"
+                          className="inline-block font-sans font-black uppercase text-[clamp(26px,4.5vw,66px)] leading-[1.0] tracking-[-0.035em] text-[#F6F5F2] drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)] will-change-transform"
                         >
                           {l.char}
                         </motion.span>
@@ -360,34 +361,6 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
               </div>
             ))}
           </div>
-
-          {/* Tracked Capabilities Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{
-              opacity: stage === 'ready' ? 0.8 : 0,
-              y: stage === 'ready' ? 0 : 12,
-            }}
-            transition={{ duration: 0.65, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-3 sm:mt-4 font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.26em] text-white/90 uppercase text-center max-w-2xl px-4"
-          >
-            {sublineText}
-          </motion.p>
-        </div>
-
-        {/* Minimal Scroll Cue at Bottom */}
-        <div
-          className={`pt-5 sm:pt-7 flex justify-center transition-opacity duration-700 pointer-events-auto ${
-            stage === 'ready' ? 'opacity-90' : 'opacity-0'
-          }`}
-        >
-          <a
-            href="#about"
-            className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono font-medium uppercase tracking-[0.2em] text-white/80 hover:text-white transition-colors"
-          >
-            <span>Scroll to explore</span>
-            <span className="animate-bounce">&darr;</span>
-          </a>
         </div>
 
       </div>
