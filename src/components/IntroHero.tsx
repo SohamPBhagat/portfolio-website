@@ -13,12 +13,12 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
   // 'opening' -> off-white background with "SO [H portal] AM" (Eye Video active in H)
   // 'strobe'  -> Glitch tensor lattice active in H
   // 'expand'  -> soham.png active in H, expanding outward to fullscreen, SO & AM slide out
-  // 'ready'   -> Fullscreen hero active, refined quote letters pop up in randomized wave
+  // 'ready'   -> Fullscreen hero active, headline letters pop up with randomized wave
   const [stage, setStage] = useState<'opening' | 'strobe' | 'expand' | 'ready'>('opening');
   const [activeMediaIdx, setActiveMediaIdx] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Authoritative, refined 2-line statement of craft & standards
+  // Authoritative, monumental 2-line statement of craft & standards
   const headlineLines = useMemo(
     () => [
       "WHERE MATHEMATICAL RIGOR",
@@ -128,7 +128,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
   return (
     <section id="hero" className="sticky top-0 w-full h-[100svh] min-h-[640px] overflow-hidden bg-[#0A0D14] select-none z-0">
       
-      {/* 🖼️ 1. FULL-SCREEN BACKGROUND HERO IMAGE (Natural Lighting Preserved) */}
+      {/* 🖼️ 1. FULL-SCREEN BACKGROUND HERO IMAGE */}
       <div
         className={`absolute inset-0 z-0 w-full h-full overflow-hidden pointer-events-none transition-opacity duration-700 ${
           stage === 'expand' || stage === 'ready' ? 'opacity-100' : 'opacity-0'
@@ -308,9 +308,9 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
         )}
       </AnimatePresence>
 
-      {/* 🌟 3. MONUMENTAL HEADLINE: ELEGANT EDITORIAL PROPORTION */}
+      {/* 🌟 3. MONUMENTAL EDITORIAL HEADLINE */}
       <div
-        className="relative z-10 w-full h-full flex flex-col justify-end items-center pb-12 sm:pb-16 md:pb-20 px-4 pointer-events-none text-white"
+        className="relative z-10 w-full h-full flex flex-col justify-end items-center pb-12 sm:pb-16 md:pb-20 px-6 sm:px-10 pointer-events-none text-white"
         style={{ alignItems: 'center' }}
       >
         
@@ -319,12 +319,12 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
           className="w-full flex flex-col items-center select-none pointer-events-auto text-center"
           style={{ width: '100%', maxWidth: '1440px', marginInline: 'auto' }}
         >
-          {/* 2-Line Kinetic Headline with Refined Editorial Weight */}
-          <div className="w-full flex flex-col items-center space-y-1 sm:space-y-2">
+          {/* 2-Line Kinetic Headline */}
+          <div className="w-full flex flex-col items-center space-y-1.5 sm:space-y-2.5">
             {preparedHeadline.map((lineWords, lineIdx) => (
               <div
                 key={lineIdx}
-                className="w-full flex flex-row flex-wrap justify-center items-center gap-x-[0.28em] sm:gap-x-[0.34em]"
+                className="w-full flex flex-row flex-wrap justify-center items-center gap-x-[0.26em] sm:gap-x-[0.32em]"
               >
                 {lineWords.map((w, wordIdx) => (
                   <span
@@ -347,7 +347,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
                             delay: stage === 'ready' ? l.delay : 0,
                             ease: [0.16, 1, 0.3, 1],
                           }}
-                          className="inline-block font-sans font-extrabold uppercase text-[clamp(22px,3.4vw,48px)] leading-[1.06] tracking-[-0.025em] text-[#F6F5F2] drop-shadow-[0_2px_14px_rgba(0,0,0,0.8)] will-change-transform"
+                          className="inline-block font-sans font-extrabold uppercase text-[clamp(24px,4.0vw,58px)] leading-[1.04] tracking-[-0.03em] text-[#FFFFFF] drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)] will-change-transform"
                         >
                           {l.char}
                         </motion.span>
