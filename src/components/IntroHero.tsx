@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface IntroHeroProps {
@@ -10,20 +10,15 @@ interface IntroHeroProps {
 
 export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroProps) {
   // Stages:
-  // 'opening' -> off-white background with "SO [gap opens] HAM"
-  // 'strobe'  -> 3 images cycle inside the center box
-  // 'expand'  -> soham.png smoothly expands to fill 100% of the screen, SO & HAM slide out
-  // 'ready'   -> Fullscreen hero active, headline letters pop up with nbnzia randomized wave
+  // 'opening' -> off-white background with "SO [H portal] AM" (Eye Video active in H)
+  // 'strobe'  -> Glitch tensor lattice active in H
+  // 'expand'  -> soham.png active in H, expanding outward to fullscreen, SO & AM slide out
+  // 'ready'   -> Fullscreen hero active, headline letters pop up with randomized wave
   const [stage, setStage] = useState<'opening' | 'strobe' | 'expand' | 'ready'>('opening');
-  const [activeImageIdx, setActiveImageIdx] = useState(0);
+  const [activeMediaIdx, setActiveMediaIdx] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-  const images = [
-    { src: '/images/intro-1.svg', alt: '01 / Forge Studio' },
-    { src: '/images/intro-2.svg', alt: '02 / Vector Graph' },
-    { src: '/images/soham.png', alt: '03 / Soham Bhagat' },
-  ];
-
-  // Concept 3: Clean, high-impact 2-line headline engineered for presence and clarity
+  // Concept: Clean, high-impact 2-line headline engineered for presence and clarity
   const headlineLines = useMemo(
     () => [
       "ENGINEERING THE NEXT ERA",
@@ -34,7 +29,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
 
   const sublineText = "SYSTEM DESIGN · HIGH-THROUGHPUT RUNTIMES · ADAPTIVE WORKFLOWS";
 
-  // Generate deterministic randomized character shuffle order for the pop-up wave (Zero SSR hydration mismatch)
+  // Generate deterministic randomized character shuffle order for the pop-up wave
   const charDelays = useMemo(() => {
     let totalChars = 0;
     headlineLines.forEach((line) => {
@@ -79,7 +74,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
   }, [headlineLines, charDelays]);
 
   // Callback ref to avoid effect restarts on prop changes
-  const onStateChangeRef = React.useRef(onStateChange);
+  const onStateChangeRef = useRef(onStateChange);
   useEffect(() => {
     onStateChangeRef.current = onStateChange;
   }, [onStateChange]);
@@ -88,37 +83,36 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
   useEffect(() => {
     let isMounted = true;
 
-    // 1. Initial State: Opening
-    setActiveImageIdx(0);
+    // 1. Initial State: Opening (Coded Eye Video playing in H)
+    setStage('opening');
+    setActiveMediaIdx(0);
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+    }
     if (onStateChangeRef.current) onStateChangeRef.current(false);
 
-    // 2. Open aperture & show image 1 (strobe) at 200ms
+    // 2. Strobe to Glitch Tensor Lattice at 450ms
     const t1 = setTimeout(() => {
       if (!isMounted) return;
       setStage('strobe');
-      setActiveImageIdx(0);
-    }, 200);
+      setActiveMediaIdx(1);
+    }, 450);
 
-    // 3. Strobe to image 2 at 500ms
+    // 3. Strobe to Soham's photo at 750ms
     const t2 = setTimeout(() => {
       if (!isMounted) return;
-      setActiveImageIdx(1);
-    }, 500);
+      setActiveMediaIdx(2);
+    }, 750);
 
-    // 4. Strobe to Soham's photo at 800ms
+    // 4. Expand H aperture to full screen at 1050ms
     const t3 = setTimeout(() => {
       if (!isMounted) return;
-      setActiveImageIdx(2);
-    }, 800);
-
-    // 5. Expand aperture to full screen at 1100ms
-    const t4 = setTimeout(() => {
-      if (!isMounted) return;
       setStage('expand');
-    }, 1100);
+    }, 1050);
 
-    // 6. Complete intro and reveal headline wave at 1600ms
-    const t5 = setTimeout(() => {
+    // 5. Complete intro and reveal headline wave at 1600ms
+    const t4 = setTimeout(() => {
       if (!isMounted) return;
       setStage('ready');
       if (onStateChangeRef.current) onStateChangeRef.current(true);
@@ -130,14 +124,13 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
       clearTimeout(t2);
       clearTimeout(t3);
       clearTimeout(t4);
-      clearTimeout(t5);
     };
   }, [replayTrigger]);
 
   return (
     <section id="hero" className="sticky top-0 w-full h-[100svh] min-h-[640px] overflow-hidden bg-[#0A0D14] select-none z-0">
       
-      {/* 🖼️ 1. FULL-SCREEN BACKGROUND HERO IMAGE (Framed with headroom, face completely in sky) */}
+      {/* 🖼️ 1. FULL-SCREEN BACKGROUND HERO IMAGE */}
       <div
         className={`absolute inset-0 z-0 w-full h-full overflow-hidden pointer-events-none transition-opacity duration-700 ${
           stage === 'expand' || stage === 'ready' ? 'opacity-100' : 'opacity-0'
@@ -150,7 +143,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
         />
       </div>
 
-      {/* 🎬 2. NBNZIA PRELOADER: 'SO' [BOX] 'HAM' in ONE STRICT PHYSICAL ROW */}
+      {/* 🎬 2. SYMMETRIC 'SO' [H PORTAL] 'AM' PRELOADER */}
       <AnimatePresence>
         {stage !== 'ready' && (
           <motion.div
@@ -161,8 +154,8 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
               stage === 'expand' ? 'bg-transparent pointer-events-none' : 'bg-[#EAE8E3]'
             }`}
           >
-            {/* Single Flex Container: SO + Box + HAM */}
-            <div className="flex items-center justify-center font-display font-extrabold text-[clamp(44px,10vw,140px)] text-[#111111] leading-none tracking-tight">
+            {/* 2-1-2 Symmetric Flex Container: SO + [H] + AM */}
+            <div className="flex items-center justify-center font-sans font-black text-[clamp(52px,12vw,160px)] text-[#111111] leading-none tracking-[-0.04em] uppercase select-none">
               
               {/* Left Wordmark: 'SO' */}
               <motion.span
@@ -171,63 +164,116 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
                   opacity: stage === 'expand' ? 0 : 1,
                 }}
                 transition={{
-                  duration: stage === 'expand' ? 0.8 : 0.4,
+                  duration: stage === 'expand' ? 0.75 : 0.35,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="shrink-0 pr-4 sm:pr-8 will-change-transform"
+                className="shrink-0 pr-2 sm:pr-4 will-change-transform"
               >
                 SO
               </motion.span>
 
-              {/* Center Aperture Box - GPU Scale & Opacity */}
+              {/* Center: The 'H' Cutout Portal */}
               <motion.div
                 initial={false}
                 animate={{
-                  scale: stage === 'expand' ? 6 : 1,
+                  scale: stage === 'expand' ? 10 : 1,
                   opacity: stage === 'expand' ? 0 : 1,
-                  width: stage === 'opening' ? 90 : 220,
-                  height: stage === 'opening' ? 100 : 140,
                 }}
                 transition={{
-                  duration: stage === 'expand' ? 0.85 : 0.4,
+                  duration: stage === 'expand' ? 0.85 : 0.35,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="relative overflow-hidden bg-[#181818] shadow-2xl shrink-0 rounded will-change-transform"
+                className="relative shrink-0 flex items-center justify-center will-change-transform"
               >
-                {images.map((img, idx) => (
-                  <motion.div
-                    key={img.src}
-                    initial={{ opacity: idx === 0 ? 1 : 0 }}
-                    animate={{
-                      opacity: activeImageIdx === idx ? 1 : 0,
-                    }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute inset-0 w-full h-full"
-                  >
-                    <img
-                      src={img.src}
-                      alt={img.alt}
-                      className={`w-full h-full ${
-                        idx === 2 ? 'object-cover object-[center_16%] sm:object-[center_18%]' : 'object-cover'
-                      }`}
-                    />
-                  </motion.div>
-                ))}
+                {/* SVG Cutout Mask for Letter 'H' */}
+                <svg
+                  className="w-[0.92em] h-[1.12em] overflow-visible"
+                  viewBox="0 0 100 115"
+                >
+                  <defs>
+                    <clipPath id="h-portal-mask">
+                      <text
+                        x="50"
+                        y="68"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        fontSize="112"
+                        fontWeight="900"
+                        fontFamily="var(--font-sans), 'Figtree', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif"
+                        letterSpacing="-0.04em"
+                      >
+                        H
+                      </text>
+                    </clipPath>
+                  </defs>
+
+                  {/* Masked Active Media Content inside the letter H */}
+                  <g clipPath="url(#h-portal-mask)">
+                    <foreignObject x="0" y="0" width="100" height="115">
+                      <div className="relative w-full h-full bg-[#111111] overflow-hidden">
+                        
+                        {/* Slot 1: Coded Eye Video */}
+                        <div
+                          className={`absolute inset-0 w-full h-full transition-opacity duration-200 ${
+                            activeMediaIdx === 0 ? 'opacity-100' : 'opacity-0'
+                          }`}
+                        >
+                          <video
+                            ref={videoRef}
+                            src="/videos/coded-eye.mp4"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="w-full h-full object-cover scale-110"
+                          />
+                        </div>
+
+                        {/* Slot 2: Glitch 3D Vector Tensor Lattice */}
+                        <div
+                          className={`absolute inset-0 w-full h-full transition-opacity duration-200 ${
+                            activeMediaIdx === 1 ? 'opacity-100' : 'opacity-0'
+                          }`}
+                        >
+                          <img
+                            src="/images/glitch.jpg"
+                            alt="Computation Lattice"
+                            className="w-full h-full object-cover scale-105"
+                          />
+                        </div>
+
+                        {/* Slot 3: Soham Portrait Photo */}
+                        <div
+                          className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${
+                            activeMediaIdx === 2 ? 'opacity-100' : 'opacity-0'
+                          }`}
+                        >
+                          <img
+                            src="/images/soham.png"
+                            alt="Soham Bhagat"
+                            className="w-full h-full object-cover object-[center_18%]"
+                          />
+                        </div>
+
+                      </div>
+                    </foreignObject>
+                  </g>
+                </svg>
               </motion.div>
 
-              {/* Right Wordmark: 'HAM' */}
+              {/* Right Wordmark: 'AM' */}
               <motion.span
                 animate={{
                   x: stage === 'expand' ? '110vw' : 0,
                   opacity: stage === 'expand' ? 0 : 1,
                 }}
                 transition={{
-                  duration: stage === 'expand' ? 0.8 : 0.4,
+                  duration: stage === 'expand' ? 0.75 : 0.35,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="shrink-0 pl-4 sm:pl-8 will-change-transform"
+                className="shrink-0 pl-2 sm:pl-4 will-change-transform"
               >
-                HAM
+                AM
               </motion.span>
 
             </div>
@@ -240,7 +286,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
                     setStage('ready');
                     if (onStateChange) onStateChange(true);
                   }}
-                  className="text-[10px] font-mono uppercase tracking-widest text-slate-500 hover:text-black cursor-pointer"
+                  className="text-[10px] font-mono uppercase tracking-widest text-neutral-500 hover:text-black cursor-pointer transition-colors"
                 >
                   [ Skip Intro ]
                 </button>
@@ -250,7 +296,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
         )}
       </AnimatePresence>
 
-      {/* 🌟 3. NBNZIA HEADLINE: DYNAMIC DIFFERENCE BLEND (WHITE OVER HOODIE, DEEP NAVY OVER SKY) */}
+      {/* 🌟 3. NBNZIA HEADLINE: DYNAMIC DIFFERENCE BLEND */}
       <div
         className="relative z-10 w-full h-full flex flex-col justify-end items-center pb-12 sm:pb-16 md:pb-20 px-4 pointer-events-none mix-blend-difference text-white"
         style={{ alignItems: 'center' }}
