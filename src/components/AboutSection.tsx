@@ -21,7 +21,7 @@ function PopUpWaveWord({
   const color = useTransform(
     progress,
     [start, waveMid, end],
-    ['rgba(17, 17, 17, 0.20)', '#FF3B1D', '#111111']
+    ['rgba(17, 17, 17, 0.18)', 'rgba(255, 59, 29, 1)', 'rgba(17, 17, 17, 1)']
   );
 
   return (
@@ -104,6 +104,9 @@ export default function AboutSection() {
     offset: ['start start', 'end end'],
   });
 
+  const buttonOpacity = useTransform(scrollYProgress, [0.72, 0.88], [0.35, 1]);
+  const buttonY = useTransform(scrollYProgress, [0.72, 0.88], [10, 0]);
+
   const paragraph1 =
     "I engineer autonomous developer tools and multi-agent platforms that turn complex, stochastic AI workflows into deterministic production software.";
 
@@ -111,7 +114,7 @@ export default function AboutSection() {
     "Moving beyond toy notebooks, I focus on local-first runtimes, persistent memory graphs, and parallel execution sandboxes built for speed and reliability.";
 
   return (
-    <div ref={containerRef} id="about" className="relative z-10 w-full bg-[#F6F5F2] h-[190vh]">
+    <div ref={containerRef} id="about" className="relative z-10 w-full bg-[#F6F5F2] h-[320vh]">
       
       {/* Sticky Fullscreen Frame */}
       <div className="sticky top-0 h-screen w-full flex flex-col justify-between pt-20 sm:pt-24 pb-4 overflow-hidden select-none bg-[#F6F5F2]">
@@ -156,26 +159,29 @@ export default function AboutSection() {
                 ----------------------------------------------------------------- */}
             <div className="flex-1 min-w-0 flex flex-col justify-center z-10">
               <div className="space-y-6">
-                {/* Paragraph 1: Laser wave word reveal (0.10 -> 0.45) */}
+                {/* Paragraph 1: Laser wave word reveal (0.08 -> 0.46) */}
                 <ScrollPopUpParagraph
                   text={paragraph1}
                   progress={scrollYProgress}
-                  startRange={0.10}
-                  endRange={0.45}
+                  startRange={0.08}
+                  endRange={0.46}
                   className="font-sans font-medium text-2xl lg:text-[30px] xl:text-[33px] leading-[1.3] tracking-[-0.03em] text-[#111111]"
                 />
 
-                {/* Paragraph 2: Follow-up reveal (0.40 -> 0.75) */}
+                {/* Paragraph 2: Follow-up reveal (0.50 -> 0.86) */}
                 <ScrollPopUpParagraph
                   text={paragraph2}
                   progress={scrollYProgress}
-                  startRange={0.40}
-                  endRange={0.75}
+                  startRange={0.50}
+                  endRange={0.86}
                   className="font-sans font-normal text-lg lg:text-[20px] xl:text-[22px] leading-[1.38] tracking-[-0.02em] text-[#111111]"
                 />
 
                 {/* Single Commanding Kinetic Pill CTA */}
-                <div className="pt-8 sm:pt-10 flex items-center select-none">
+                <motion.div
+                  style={{ opacity: buttonOpacity, y: buttonY }}
+                  className="pt-8 sm:pt-10 flex items-center select-none"
+                >
                   
                   {/* Explore Works Button -> Smoothly scrolls to dedicated Section 3 (#process) */}
                   <button
@@ -193,7 +199,7 @@ export default function AboutSection() {
                     </div>
                   </button>
 
-                </div>
+                </motion.div>
               </div>
             </div>
 
@@ -210,15 +216,26 @@ export default function AboutSection() {
           </div>
           
           <div className="space-y-4">
-            <p className="font-sans font-medium text-xl leading-snug text-[#111111]">
-              {paragraph1}
-            </p>
-            <p className="font-sans text-base leading-relaxed text-[#111111]/80">
-              {paragraph2}
-            </p>
+            <ScrollPopUpParagraph
+              text={paragraph1}
+              progress={scrollYProgress}
+              startRange={0.08}
+              endRange={0.46}
+              className="font-sans font-medium text-xl leading-snug text-[#111111]"
+            />
+            <ScrollPopUpParagraph
+              text={paragraph2}
+              progress={scrollYProgress}
+              startRange={0.50}
+              endRange={0.86}
+              className="font-sans text-base leading-relaxed text-[#111111]"
+            />
           </div>
 
-          <div className="pt-2">
+          <motion.div
+            style={{ opacity: buttonOpacity, y: buttonY }}
+            className="pt-2"
+          >
             <button
               type="button"
               onClick={() => {
@@ -228,7 +245,7 @@ export default function AboutSection() {
             >
               Explore Works ↗
             </button>
-          </div>
+          </motion.div>
         </div>
 
         {/* =====================================================================
