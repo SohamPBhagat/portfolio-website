@@ -3,7 +3,6 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
-import { portfolioData } from '@/data/portfolioData';
 import MarqueeTicker from '@/components/MarqueeTicker';
 
 // Single word that reveals smoothly as you scroll (Laser Wave Physics)
@@ -98,7 +97,6 @@ function ScrollPopUpParagraph({
 
 export default function AboutSection() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { personal } = portfolioData;
 
   // Master scroll timeline for Section 2
   const { scrollYProgress } = useScroll({
@@ -107,10 +105,10 @@ export default function AboutSection() {
   });
 
   const paragraph1 =
-    "Data Science undergraduate at Savitribai Phule Pune University Department of Technology building multi-agent parallel IDEs, token-optimized SQLite memory graphs, and autonomous developer workflows.";
+    "I engineer autonomous developer tools and multi-agent platforms that turn complex, stochastic AI workflows into deterministic production software.";
 
   const paragraph2 =
-    "I don't just run notebooks. I build production-grade software systems that bridge statistical machine learning theory with deterministic terminal orchestration.";
+    "Moving beyond toy notebooks, I focus on local-first runtimes, persistent memory graphs, and parallel execution sandboxes built for speed and reliability.";
 
   return (
     <div ref={containerRef} id="about" className="relative z-10 w-full bg-[#F6F5F2] h-[190vh]">
@@ -126,32 +124,35 @@ export default function AboutSection() {
           <div className="w-full flex items-center justify-between gap-16 xl:gap-24">
             
             {/* -----------------------------------------------------------------
-                LEFT COLUMN: Structured Editorial Metadata
+                LEFT COLUMN: Structured Editorial Metadata (Clean, Non-repetitive)
                 ----------------------------------------------------------------- */}
-            <div className="w-[280px] lg:w-[320px] shrink-0 flex flex-col justify-between space-y-6">
-              <div className="space-y-1 font-mono text-[10px] uppercase tracking-[0.20em] text-neutral-400">
+            <div className="w-[280px] lg:w-[320px] shrink-0 flex flex-col justify-between space-y-7">
+              <div className="space-y-1 font-mono text-[11px] uppercase tracking-[0.20em] text-neutral-400">
                 <div className="text-neutral-500 font-semibold tracking-[0.22em]">
-                  02 // ABOUT & BACKGROUND
+                  02 // BACKGROUND
                 </div>
                 <div>PUNE, MAHARASHTRA, IN</div>
               </div>
 
-              <div className="space-y-1 font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-400">
+              <div className="space-y-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-400">
                 <div className="font-semibold text-neutral-700 tracking-[0.20em]">
-                  B.SC. DATA SCIENCE @ SPPU
+                  EDUCATION
                 </div>
-                <div>DEPARTMENT OF TECHNOLOGY</div>
-                <div className="text-neutral-500">SAVITRIBAI PHULE PUNE UNIV.</div>
+                <div className="text-neutral-600">B.Sc. Data Science</div>
+                <div className="text-neutral-400 text-[10px]">SPPU · Dept. of Technology</div>
               </div>
 
-              <div className="space-y-1 font-mono text-[10px] uppercase tracking-[0.16em] text-neutral-400">
-                <div>FOCUS: AGENTIC WORKBENCHES</div>
-                <div>DETERMINISTIC SYSTEMS &amp; ML</div>
+              <div className="space-y-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-neutral-400">
+                <div className="font-semibold text-neutral-700 tracking-[0.18em]">
+                  CORE DOMAINS
+                </div>
+                <div className="text-neutral-600">Autonomous Agent Architectures</div>
+                <div className="text-neutral-400 text-[10px]">Deterministic Systems &amp; Runtimes</div>
               </div>
             </div>
 
             {/* -----------------------------------------------------------------
-                RIGHT COLUMN: Editorial Typography + Dual Kinetic Pill Buttons
+                RIGHT COLUMN: Editorial Typography + Single Kinetic Pill CTA
                 ----------------------------------------------------------------- */}
             <div className="flex-1 min-w-0 flex flex-col justify-center z-10">
               <div className="space-y-6">
@@ -173,39 +174,24 @@ export default function AboutSection() {
                   className="font-sans font-normal text-lg lg:text-[20px] xl:text-[22px] leading-[1.38] tracking-[-0.02em] text-[#111111]"
                 />
 
-                {/* Dual Kinetic Pill Buttons situated directly beneath the copy */}
-                <div className="pt-8 sm:pt-10 flex items-center gap-6 select-none">
+                {/* Single Commanding Kinetic Pill CTA */}
+                <div className="pt-8 sm:pt-10 flex items-center select-none">
                   
-                  {/* See the work Button -> Smoothly scrolls to dedicated Section 3 (#process) */}
+                  {/* Explore Works Button -> Smoothly scrolls to dedicated Section 3 (#process) */}
                   <button
                     type="button"
                     onClick={() => {
                       document.getElementById('process')?.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="group relative inline-flex items-center rounded-full h-11 w-[175px] sm:w-[190px] overflow-hidden cursor-pointer bg-[#0A0D14] hover:bg-black text-[#F4E3B2] border border-black/15 shadow-md transition-colors duration-300"
+                    className="group relative inline-flex items-center rounded-full h-12 w-[210px] overflow-hidden cursor-pointer bg-[#0A0D14] hover:bg-black text-[#F4E3B2] border border-black/15 shadow-md transition-colors duration-300"
                   >
-                    <span className="w-full text-center block whitespace-nowrap text-xs font-semibold tracking-wide transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] pr-8 pl-3 group-hover:pl-8 group-hover:pr-3">
-                      See the work
+                    <span className="w-full text-center block whitespace-nowrap text-xs font-semibold tracking-wider uppercase transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] pr-8 pl-4 group-hover:pl-8 group-hover:pr-4">
+                      Explore Works
                     </span>
-                    <div className="absolute top-1/2 -translate-y-1/2 right-1.5 w-8 h-8 bg-white/15 text-[#F4E3B2] group-hover:bg-[#F4E3B2] group-hover:text-[#0A0D14] rounded-full flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:right-[calc(100%-38px)] group-hover:rotate-45 shadow-sm pointer-events-none">
-                      <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300" />
+                    <div className="absolute top-1/2 -translate-y-1/2 right-1.5 w-9 h-9 bg-white/15 text-[#F4E3B2] group-hover:bg-[#F4E3B2] group-hover:text-[#0A0D14] rounded-full flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:right-[calc(100%-42px)] group-hover:rotate-45 shadow-sm pointer-events-none">
+                      <ArrowUpRight className="w-4 h-4 transition-transform duration-300" />
                     </div>
                   </button>
-
-                  {/* Let's talk Button */}
-                  <a
-                    href={personal.linkedin}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group relative inline-flex items-center rounded-full h-11 w-[170px] sm:w-[185px] overflow-hidden cursor-pointer bg-[#FF3B1D] hover:bg-[#E02E12] text-white border border-black/10 shadow-md transition-colors duration-300"
-                  >
-                    <span className="w-full text-center block whitespace-nowrap text-xs font-semibold tracking-wide transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] pr-8 pl-3 group-hover:pl-8 group-hover:pr-3">
-                      Let&apos;s talk
-                    </span>
-                    <div className="absolute top-1/2 -translate-y-1/2 right-1.5 w-8 h-8 bg-white/20 text-white group-hover:bg-white group-hover:text-[#FF3B1D] rounded-full flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:right-[calc(100%-38px)] group-hover:rotate-45 shadow-sm pointer-events-none">
-                      <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300" />
-                    </div>
-                  </a>
 
                 </div>
               </div>
@@ -219,8 +205,8 @@ export default function AboutSection() {
             ===================================================================== */}
         <div className="lg:hidden w-full px-6 py-8 flex flex-col gap-8 flex-1 justify-center">
           <div className="space-y-1 font-mono text-[10px] uppercase tracking-wider text-neutral-500">
-            <div>B.SC. DATA SCIENCE @ SPPU</div>
-            <div>DEPARTMENT OF TECHNOLOGY</div>
+            <div className="font-semibold text-neutral-700">02 // BACKGROUND · PUNE, IN</div>
+            <div>B.Sc. Data Science · SPPU Dept. of Technology</div>
           </div>
           
           <div className="space-y-4">
@@ -232,24 +218,16 @@ export default function AboutSection() {
             </p>
           </div>
 
-          <div className="flex items-center gap-4 pt-2">
+          <div className="pt-2">
             <button
               type="button"
               onClick={() => {
                 document.getElementById('process')?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="inline-flex items-center justify-center rounded-full h-10 px-6 bg-[#0A0D14] text-[#F4E3B2] text-xs font-semibold"
+              className="inline-flex items-center justify-center rounded-full h-11 px-7 bg-[#0A0D14] text-[#F4E3B2] text-xs font-semibold uppercase tracking-wider"
             >
-              See the work
+              Explore Works ↗
             </button>
-            <a
-              href={personal.linkedin}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-full h-10 px-6 bg-[#FF3B1D] text-white text-xs font-semibold"
-            >
-              Let&apos;s talk
-            </a>
           </div>
         </div>
 
