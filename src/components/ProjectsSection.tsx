@@ -70,7 +70,7 @@ const PROJECTS: ProjectCaseStudy[] = [
       { label: 'Rendering Core', value: 'Frame-Accurate FFmpeg' },
     ],
     tags: ['GSAP', 'Remotion', 'FFmpeg', 'Node.js', 'TypeScript', 'Whisper'],
-    image: '/images/forge-studio-grid.png',
+    image: '/images/forge-studio-launcher.png',
     liveUrl: 'https://www.forgeapi.org/',
     githubUrl: 'https://github.com/SohamBhagat',
   },

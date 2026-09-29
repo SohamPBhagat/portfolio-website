@@ -2,12 +2,16 @@
 
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
-import { ExternalLink, Terminal, Cpu, GitFork, Layers, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Play, Pause, Volume2, VolumeX, Layers, GitFork, Sparkles, CheckCircle2, Cpu } from 'lucide-react';
 
 export default function VideoShowcaseSection() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
 
-  const [activeTab, setActiveTab] = useState<'grid' | 'canvas' | 'telemetry'>('grid');
+  const [activeTab, setActiveTab] = useState<'video' | 'grid' | 'canvas'>('video');
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
   const [userSelectedTab, setUserSelectedTab] = useState<boolean>(false);
   const userOverrideTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -21,21 +25,58 @@ export default function VideoShowcaseSection() {
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     if (userSelectedTab) return;
     if (latest < 0.36) {
-      setActiveTab('grid');
+      setActiveTab('video');
     } else if (latest < 0.70) {
-      setActiveTab('canvas');
+      setActiveTab('grid');
     } else {
-      setActiveTab('telemetry');
+      setActiveTab('canvas');
     }
   });
 
-  const handleTabClick = (tab: 'grid' | 'canvas' | 'telemetry') => {
+  const handleTabClick = (tab: 'video' | 'grid' | 'canvas') => {
     setActiveTab(tab);
     setUserSelectedTab(true);
     if (userOverrideTimeout.current) clearTimeout(userOverrideTimeout.current);
     userOverrideTimeout.current = setTimeout(() => {
       setUserSelectedTab(false);
-    }, 6000);
+    }, 7000);
+  };
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (videoRef.current.paused) {
+      videoRef.current.play().catch(() => {});
+      setIsPlaying(true);
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const toggleMute = () => {
+    if (!videoRef.current) return;
+    videoRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
+  };
+
+  const handleTimeUpdate = () => {
+    if (!videoRef.current || !progressBarRef.current) return;
+    const duration = videoRef.current.duration;
+    if (!duration || isNaN(duration)) return;
+    const percent = (videoRef.current.currentTime / duration) * 100;
+    progressBarRef.current.style.width = `${percent}%`;
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!videoRef.current) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const newProgress = Math.max(0, Math.min(1, clickX / rect.width));
+    const totalDuration = videoRef.current.duration || 10;
+    videoRef.current.currentTime = newProgress * totalDuration;
+    if (progressBarRef.current) {
+      progressBarRef.current.style.width = `${newProgress * 100}%`;
+    }
   };
 
   // Smooth 3D perspective scale & subtle elevation
@@ -120,9 +161,9 @@ export default function VideoShowcaseSection() {
               <div className="flex items-center gap-1 bg-[#04060A] p-1 rounded-xl border border-white/10 text-xs font-mono select-none relative shadow-inner">
                 {(
                   [
-                    { id: 'grid', label: 'Parallel Grid', icon: Layers },
+                    { id: 'video', label: '3D Launch Reel', icon: Sparkles },
+                    { id: 'grid', label: '6-Agent Grid', icon: Layers },
                     { id: 'canvas', label: 'DAG Canvas', icon: GitFork },
-                    { id: 'telemetry', label: 'Live Telemetry', icon: Terminal },
                   ] as const
                 ).map((tab) => {
                   const isActive = activeTab === tab.id;
@@ -145,7 +186,7 @@ export default function VideoShowcaseSection() {
                           className="absolute inset-0 bg-white/15 border border-white/20 rounded-lg shadow-sm -z-10"
                         />
                       )}
-                      <Icon className="w-3.5 h-3.5" />
+                      <Icon className="w-3.5 h-3.5 text-[#FF3B1D]" />
                       <span className="tracking-wide uppercase text-[11px] sm:text-xs">{tab.label}</span>
                     </button>
                   );
@@ -170,7 +211,54 @@ export default function VideoShowcaseSection() {
               <AnimatePresence mode="wait">
                 
                 {/* =============================================================
-                    TAB 1: PARALLEL TERMINAL GRID
+                    TAB 1: 3D CINEMATIC LAUNCH REEL (10s Product Trailer)
+                    ============================================================= */}
+                {activeTab === 'video' && (
+                  <motion.div
+                    key="tab-video"
+                    initial={{ opacity: 0, scale: 0.99 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.99 }}
+                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0 w-full h-full flex items-center justify-center bg-black"
+                  >
+                    <video
+                      ref={videoRef}
+                      src="/videos/forge-showcase.mp4"
+                      poster="/images/forge-studio-grid.png"
+                      autoPlay
+                      loop
+                      muted={isMuted}
+                      playsInline
+                      preload="auto"
+                      onTimeUpdate={handleTimeUpdate}
+                      className="w-full h-full object-cover"
+                    />
+
+                    {/* Overlay Click-to-Play Handler */}
+                    <button
+                      type="button"
+                      onClick={togglePlay}
+                      aria-label={isPlaying ? 'Pause video' : 'Play video'}
+                      className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/10 hover:bg-black/25 transition-colors duration-200 group/playbtn cursor-pointer"
+                    >
+                      {!isPlaying && (
+                        <div className="w-16 h-16 rounded-full bg-[#FF3B1D] text-white flex items-center justify-center shadow-2xl transform scale-100 group-hover/playbtn:scale-105 transition-transform duration-200">
+                          <Play size={24} className="ml-1 fill-current" />
+                        </div>
+                      )}
+                    </button>
+
+                    {/* Live Tech Overlay Badge */}
+                    <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-white/90 flex items-center gap-2 pointer-events-none shadow-xl">
+                      <span className="w-2 h-2 rounded-full bg-[#FF3B1D] animate-ping" />
+                      <span>3D PRODUCT LAUNCH TRAILER &bull; HARDWARE SWEEP</span>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* =============================================================
+                    TAB 2: 6-AGENT CONPTY PARALLEL TERMINAL GRID
                     ============================================================= */}
                 {activeTab === 'grid' && (
                   <motion.div
@@ -183,7 +271,7 @@ export default function VideoShowcaseSection() {
                   >
                     <img
                       src="/images/forge-studio-grid.png"
-                      alt="Forge Studio Multi-Agent Grid"
+                      alt="Forge Studio 6-Agent Parallel Grid"
                       loading="lazy"
                       className="w-full h-full object-cover object-top"
                     />
@@ -191,7 +279,7 @@ export default function VideoShowcaseSection() {
                     {/* Live Tech Overlay Badge */}
                     <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-white/90 flex items-center gap-2 pointer-events-none shadow-xl">
                       <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                      <span>PARALLEL WORKTREE RUNTIME &bull; 8 CONPTY THREADS</span>
+                      <span>6 PARALLEL CONPTY WORKTREE RUNTIMES &bull; CLAUDE / CODEX / ANTIGRAVITY</span>
                     </div>
 
                     <div className="absolute bottom-4 right-4 hidden sm:flex items-center gap-2 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-neutral-300 pointer-events-none">
@@ -202,7 +290,7 @@ export default function VideoShowcaseSection() {
                 )}
 
                 {/* =============================================================
-                    TAB 2: DAG WORKFLOW CANVAS
+                    TAB 3: DAG WORKFLOW BEZIER CANVAS
                     ============================================================= */}
                 {activeTab === 'canvas' && (
                   <motion.div
@@ -215,7 +303,7 @@ export default function VideoShowcaseSection() {
                   >
                     <img
                       src="/images/forge-studio-canvas.png"
-                      alt="Forge Studio Multi-Agent Canvas"
+                      alt="Forge Studio Multi-Agent DAG Canvas"
                       loading="lazy"
                       className="w-full h-full object-cover object-top"
                     />
@@ -223,7 +311,7 @@ export default function VideoShowcaseSection() {
                     {/* Live Tech Overlay Badge */}
                     <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-white/90 flex items-center gap-2 pointer-events-none shadow-xl">
                       <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      <span>DAG WORKFLOW CANVAS &bull; REAL-TIME AGENT DEPENDENCY GRAPH</span>
+                      <span>DAG WORKFLOW CANVAS &bull; REAL-TIME BEZIER ORCHESTRATION</span>
                     </div>
 
                     <div className="absolute bottom-4 right-4 hidden sm:flex items-center gap-2 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-neutral-300 pointer-events-none">
@@ -233,119 +321,87 @@ export default function VideoShowcaseSection() {
                   </motion.div>
                 )}
 
-                {/* =============================================================
-                    TAB 3: LIVE TERMINAL TELEMETRY & RUNTIME STREAM
-                    ============================================================= */}
-                {activeTab === 'telemetry' && (
-                  <motion.div
-                    key="tab-telemetry"
-                    initial={{ opacity: 0, scale: 0.99 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.99 }}
-                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute inset-0 w-full h-full bg-[#05070C] p-6 sm:p-8 flex flex-col justify-between font-mono text-xs overflow-hidden select-text"
-                  >
-                    {/* Terminal Header */}
-                    <div className="flex items-center justify-between pb-3 border-b border-white/10 text-white/50 text-[11px]">
-                      <div className="flex items-center gap-2">
-                        <Terminal className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-white/80">pty-stream // session-4812</span>
-                        <span className="text-white/30">|</span>
-                        <span>pid: 28419</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-emerald-400 flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                          <span>STREAMING 60 FPS</span>
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Monospace Telemetry Logs */}
-                    <div className="flex-1 py-4 space-y-2 sm:space-y-2.5 overflow-hidden text-neutral-300 text-[11px] sm:text-xs leading-relaxed">
-                      <div className="text-neutral-500 font-mono">
-                        [09:42:01.004] <span className="text-blue-400">[SYSTEM]</span> ConPTY Multiplexer initialized on port :4812 (ConPTY / node-pty backend)
-                      </div>
-                      <div>
-                        [09:42:01.140] <span className="text-amber-400">[AGENT-01 // Claude Code]</span> Forking worktree sandbox to <code className="text-white/90 bg-white/10 px-1 py-0.5 rounded">.worktrees/auth-refactor</code>
-                      </div>
-                      <div>
-                        [09:42:01.320] <span className="text-emerald-400">[AGENT-02 // Antigravity]</span> Building SQLite HNSW vector index: 1,420 codebase symbols mapped in 38ms.
-                      </div>
-                      <div>
-                        [09:42:01.605] <span className="text-purple-400">[AGENT-03 // Codex]</span> Compiling Tailwind CSS design tokens and verifying TypeScript strict types.
-                      </div>
-                      <div className="text-neutral-400">
-                        [09:42:01.880] <span className="text-emerald-400">[GIT-WORKTREE]</span> Checking branch heads: 3 parallel worktrees verified. Zero lock collisions.
-                      </div>
-                      <div className="p-3 rounded-lg bg-white/5 border border-white/10 flex flex-wrap items-center justify-between gap-4 text-[11px] text-white">
-                        <div>
-                          <span className="text-white/50 block text-[9px] uppercase tracking-wider">Context Memory</span>
-                          <span className="text-emerald-400 font-bold">&lt; 200 Tokens</span> (Zero-token SQLite Graph)
-                        </div>
-                        <div>
-                          <span className="text-white/50 block text-[9px] uppercase tracking-wider">Parallel Panes</span>
-                          <span className="text-blue-400 font-bold">8 Active</span> (xterm.js GPU Canvas)
-                        </div>
-                        <div>
-                          <span className="text-white/50 block text-[9px] uppercase tracking-wider">Git Status</span>
-                          <span className="text-amber-400 font-bold">100% Collision-Free</span>
-                        </div>
-                        <div>
-                          <span className="text-white/50 block text-[9px] uppercase tracking-wider">PTY Latency</span>
-                          <span className="text-emerald-400 font-bold">12ms Roundtrip</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-white/90 pt-1">
-                        <span className="text-emerald-400">zen-tech@forge:~$</span>
-                        <span>agy stream --session session-4812 --verify-build</span>
-                        <span className="w-2 h-4 bg-[#FF3B1D] inline-block animate-pulse ml-0.5" />
-                      </div>
-                    </div>
-
-                    {/* Bottom Status pill */}
-                    <div className="pt-2 border-t border-white/10 text-[10px] text-white/40 flex items-center justify-between">
-                      <span>RUNNING IN ELECTRON WORKBENCH HARNESS</span>
-                      <span className="text-white/60">PRESS ESC TO DETACH PTY</span>
-                    </div>
-
-                  </motion.div>
-                )}
-
               </AnimatePresence>
             </div>
 
-            {/* Bottom Status & Engineering Telemetry Bar */}
+            {/* Bottom Status & Controls Bar */}
             <div className="h-11 sm:h-12 bg-[#080B12] border-t border-white/10 px-4 sm:px-6 flex items-center justify-between gap-4 select-none shrink-0 z-20 font-mono text-[10px] sm:text-[11px]">
               
-              {/* Left Indicator */}
-              <div className="flex items-center gap-2.5 text-white/80">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="font-semibold tracking-wide">
-                  {activeTab === 'grid'
-                    ? '8 PARALLEL PTY THREADS'
-                    : activeTab === 'canvas'
-                    ? 'DAG AGENT GRAPH ACTIVE'
-                    : 'TELEMETRY STREAM CONNECTED'}
-                </span>
-                <span className="text-white/20 hidden sm:inline">|</span>
-                <span className="text-white/50 hidden sm:inline">.worktrees/agent-01</span>
-              </div>
+              {activeTab === 'video' ? (
+                <>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <button
+                      type="button"
+                      onClick={togglePlay}
+                      aria-label={isPlaying ? 'Pause' : 'Play'}
+                      className="h-7 w-7 rounded-full bg-white/10 hover:bg-[#FF3B1D] text-white flex items-center justify-center transition-colors duration-200 cursor-pointer"
+                    >
+                      {isPlaying ? <Pause size={12} /> : <Play size={12} className="ml-0.5 fill-current" />}
+                    </button>
+                    <span className="font-mono text-[10px] sm:text-[11px] text-white/80 tracking-wider">
+                      3D LAUNCH TRAILER (10s)
+                    </span>
+                  </div>
 
-              {/* Center Tech Note */}
-              <div className="hidden lg:flex items-center gap-2 text-white/50">
-                <span>GPU-ACCELERATED XTERM.JS RENDERING</span>
-                <span className="text-white/20">&bull;</span>
-                <span className="text-emerald-400">60 FPS</span>
-              </div>
+                  {/* Interactive Seek Scrubber */}
+                  <div
+                    onClick={handleSeek}
+                    role="progressbar"
+                    aria-label="Video scrubber"
+                    className="flex-1 max-w-[440px] h-1.5 bg-white/10 rounded-full overflow-hidden cursor-pointer relative group/scrub py-1"
+                  >
+                    <div className="w-full h-full bg-white/15 rounded-full overflow-hidden relative">
+                      <div
+                        ref={progressBarRef}
+                        className="h-full bg-[#FF3B1D] rounded-full transition-[width] duration-100 ease-linear w-0"
+                      />
+                    </div>
+                  </div>
 
-              {/* Right Worktree Status */}
-              <div className="flex items-center gap-2 text-white/70">
-                <span className="text-neutral-400 hidden md:inline">GIT WORKTREE ISOLATION:</span>
-                <span className="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 font-semibold">
-                  100% COLLISION FREE
-                </span>
-              </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <button
+                      type="button"
+                      onClick={toggleMute}
+                      aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
+                      className="h-7 w-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors duration-200 cursor-pointer"
+                    >
+                      {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+                    </button>
+                    <span className="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 font-semibold hidden md:inline">
+                      100% COLLISION FREE
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Left Indicator */}
+                  <div className="flex items-center gap-2.5 text-white/80">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="font-semibold tracking-wide">
+                      {activeTab === 'grid'
+                        ? '6 PARALLEL PTY THREADS'
+                        : 'DAG AGENT GRAPH ACTIVE'}
+                    </span>
+                    <span className="text-white/20 hidden sm:inline">|</span>
+                    <span className="text-white/50 hidden sm:inline">.worktrees/agent-01..06</span>
+                  </div>
+
+                  {/* Center Tech Note */}
+                  <div className="hidden lg:flex items-center gap-2 text-white/50">
+                    <span>GPU-ACCELERATED XTERM.JS RENDERING</span>
+                    <span className="text-white/20">&bull;</span>
+                    <span className="text-emerald-400">60 FPS</span>
+                  </div>
+
+                  {/* Right Worktree Status */}
+                  <div className="flex items-center gap-2 text-white/70">
+                    <span className="text-neutral-400 hidden md:inline">GIT WORKTREE ISOLATION:</span>
+                    <span className="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 font-semibold">
+                      100% COLLISION FREE
+                    </span>
+                  </div>
+                </>
+              )}
 
             </div>
 
