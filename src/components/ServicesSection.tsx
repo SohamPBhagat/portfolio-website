@@ -439,7 +439,7 @@ export default function ServicesSection() {
     offset: ['start start', 'end end'],
   });
 
-  // Smoothly sync scroll progress across the 4 disciplines during scroll
+  // Smoothly sync scroll progress across the 4 disciplines as user scrolls down
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     if (userSelected) return;
     if (latest < 0.25) {
@@ -455,11 +455,23 @@ export default function ServicesSection() {
 
   const handleItemClick = (index: number) => {
     setActiveIndex(index);
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const containerTop = rect.top + scrollTop;
+    const containerHeight = containerRef.current.offsetHeight;
+    const windowHeight = window.innerHeight;
+    const scrollableDistance = containerHeight - windowHeight;
+
+    const targetProgress = (index + 0.3) / 4;
+    const targetScrollY = containerTop + targetProgress * scrollableDistance;
+
     setUserSelected(true);
+    window.scrollTo({ top: targetScrollY, behavior: 'smooth' });
     if (userOverrideTimeout.current) clearTimeout(userOverrideTimeout.current);
     userOverrideTimeout.current = setTimeout(() => {
       setUserSelected(false);
-    }, 7000);
+    }, 1000);
   };
 
   const activeDiscipline = DISCIPLINES[activeIndex];
@@ -468,7 +480,7 @@ export default function ServicesSection() {
     <section
       id="services"
       ref={containerRef}
-      className="relative z-20 bg-[#F6F5F2] text-[#111111] h-[260vh] border-t border-black/10 select-none"
+      className="relative z-20 bg-[#F6F5F2] text-[#111111] h-[300vh] border-t border-black/10 select-none"
     >
       {/* Subtle Architectural Dot Grid Background */}
       <div className="absolute inset-0 bg-[radial-gradient(#0000000a_1px,transparent_1px)] [background-size:28px_28px] pointer-events-none" />
@@ -522,7 +534,6 @@ export default function ServicesSection() {
                 return (
                   <div
                     key={item.number}
-                    onMouseEnter={() => handleItemClick(index)}
                     onClick={() => handleItemClick(index)}
                     className="group cursor-pointer py-5 sm:py-6 lg:py-7 transition-colors flex items-center justify-between"
                   >
