@@ -51,7 +51,7 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
       />
 
       {/* Full-Width Header Stage */}
-      <div className="w-full max-w-[1500px] flex items-center justify-between relative bg-transparent pointer-events-auto">
+      <div className="w-full max-w-[1520px] flex items-center justify-between relative bg-transparent pointer-events-auto">
         
         {/* Left: Prominent SOHAM Wordmark with Terminal Accent Dot */}
         <div className="flex items-center shrink-0">
@@ -61,10 +61,10 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className={`font-sans font-black tracking-[0.24em] uppercase hover:text-[#FF3B1D] transition-all duration-300 select-none leading-none flex items-center ${
+            className={`font-sans font-black text-xl sm:text-2xl tracking-[0.24em] uppercase hover:text-[#FF3B1D] transition-all duration-300 select-none leading-none py-1 ${
               isScrolledPastTop
-                ? 'text-xs sm:text-sm text-[#111111] bg-white/85 backdrop-blur-md px-3.5 py-2 rounded-full border border-black/10 shadow-[0_4px_20px_-5px_rgba(0,0,0,0.06)]'
-                : 'text-xl sm:text-2xl text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.95)] py-1'
+                ? 'text-[#111111] drop-shadow-none'
+                : 'text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.95)]'
             }`}
           >
             <span>SOHAM</span>
