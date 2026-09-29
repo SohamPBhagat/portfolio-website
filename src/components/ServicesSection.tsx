@@ -18,7 +18,7 @@ const SERVICES: ServiceItem[] = [
     title: 'Cybernetic Telemetry & UI/UX Design',
     tag: 'Broadcast Systems · 3D WebGL Globe · Radar Diagnostics · Sci-Fi Command',
     image: '/images/broadcast-telemetry-dashboard.png',
-    href: 'https://github.com/SohamBhagat',
+    href: 'https://broadcast-design-telemetry-dashboar.vercel.app/',
   },
   {
     number: '02',

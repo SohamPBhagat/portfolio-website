@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
-import { ExternalLink, Play, Pause, Volume2, VolumeX, Layers, GitFork } from 'lucide-react';
+import { ExternalLink, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 
 export default function VideoShowcaseSection() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -24,7 +24,7 @@ export default function VideoShowcaseSection() {
   // Automatically sequence the 3 tabs as user scrolls through Section 3 (unless user explicitly clicked a tab)
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     if (userSelectedTab) return;
-    if (latest < 0.36) {
+    if (latest < 0.35) {
       setActiveTab('video');
     } else if (latest < 0.70) {
       setActiveTab('grid');
@@ -88,7 +88,7 @@ export default function VideoShowcaseSection() {
     <section
       id="process"
       ref={containerRef}
-      className="relative z-10 w-full bg-[#F6F5F2] h-[260vh] border-t border-black/10"
+      className="relative z-10 w-full bg-[#F6F5F2] h-[380vh] border-t border-black/10"
     >
       {/* Subtle Architectural Blueprint Dot Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#0000000a_1px,transparent_1px)] [background-size:28px_28px] pointer-events-none" />
@@ -136,27 +136,32 @@ export default function VideoShowcaseSection() {
           </div>
 
           {/* =====================================================================
-              SPACIOUS FLOATING EDITORIAL VIEW SWITCHER (Segregated Outside Window)
+              SPACIOUS EXECUTIVE VIEW SWITCHER (Clear Segregation & Breathing Room)
               ===================================================================== */}
-          <div className="w-full flex items-center justify-between mb-4 sm:mb-5 select-none gap-4">
+          <div className="w-full flex flex-col sm:flex-row items-center justify-between mb-5 sm:mb-6 select-none gap-4">
             
-            {/* Left: Refined Pill Controller */}
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 p-1.5 rounded-full bg-[#EAE8E3] border border-black/10 shadow-inner">
+            {/* Left: Feed Status Tag */}
+            <div className="hidden sm:flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.20em] text-neutral-500 font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>INTERACTIVE WORKBENCH FEED</span>
+            </div>
+
+            {/* Center: Spacious Segmented Switcher Pill */}
+            <div className="inline-flex items-center gap-2 sm:gap-3 p-1.5 rounded-full bg-[#E8E6E0] border border-black/10 shadow-sm">
               {(
                 [
-                  { id: 'video', label: '3D Product Reel', icon: Play },
-                  { id: 'grid', label: '6-Agent Parallel Grid', icon: Layers },
-                  { id: 'canvas', label: 'DAG Workflow Canvas', icon: GitFork },
+                  { id: 'video', label: '3D Product Reel' },
+                  { id: 'grid', label: '6-Agent Parallel Grid' },
+                  { id: 'canvas', label: 'DAG Workflow Canvas' },
                 ] as const
               ).map((tab) => {
                 const isActive = activeTab === tab.id;
-                const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     type="button"
                     onClick={() => handleTabClick(tab.id)}
-                    className={`relative px-4 sm:px-5 py-2 rounded-full font-mono text-xs sm:text-[13px] font-semibold transition-all duration-200 cursor-pointer z-10 flex items-center gap-2 ${
+                    className={`relative px-5 sm:px-6 py-2.5 rounded-full font-mono text-xs sm:text-[12.5px] font-semibold transition-all duration-200 cursor-pointer z-10 flex items-center gap-2.5 ${
                       isActive
                         ? 'text-[#0A0D14]'
                         : 'text-neutral-500 hover:text-neutral-900'
@@ -166,11 +171,15 @@ export default function VideoShowcaseSection() {
                       <motion.div
                         layoutId="activeShowcaseTab"
                         transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                        className="absolute inset-0 bg-white rounded-full border border-black/10 shadow-sm -z-10"
+                        className="absolute inset-0 bg-white rounded-full border border-black/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] -z-10"
                       />
                     )}
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#FF3B1D]' : 'text-neutral-400'}`} />
-                    <span className="tracking-wide uppercase text-[11px] sm:text-xs">{tab.label}</span>
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full transition-colors duration-200 ${
+                        isActive ? 'bg-[#FF3B1D] shadow-[0_0_8px_rgba(255,59,29,0.7)]' : 'bg-neutral-400'
+                      }`}
+                    />
+                    <span className="tracking-wider uppercase">{tab.label}</span>
                   </button>
                 );
               })}
@@ -181,21 +190,20 @@ export default function VideoShowcaseSection() {
               href="https://www.forgeapi.org/"
               target="_blank"
               rel="noreferrer"
-              className="hidden sm:inline-flex items-center gap-2 text-xs font-mono font-medium text-neutral-700 hover:text-black transition-colors px-3.5 py-2 rounded-full border border-black/10 hover:border-black/25 bg-white/60 shadow-sm"
+              className="inline-flex items-center gap-2 text-xs font-mono font-medium text-neutral-700 hover:text-black transition-colors px-4 py-2 rounded-full border border-black/10 hover:border-black/25 bg-white/70 shadow-sm"
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>forgeapi.org</span>
-              <ExternalLink size={13} className="text-neutral-500" />
+              <ExternalLink size={12} className="text-[#FF3B1D]" />
             </a>
           </div>
 
           {/* =====================================================================
-              CENTERPIECE SHOWCASE WINDOW (Zero Double-Navbar Clutter)
+              CENTERPIECE SHOWCASE WINDOW (Zero Cropping with aspect-[48/25] + object-contain)
               ===================================================================== */}
-          <div className="w-full aspect-[16/9.4] max-h-[56vh] min-h-[350px] sm:min-h-[400px] bg-[#0A0D15] rounded-2xl border border-black/20 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col relative">
+          <div className="w-full aspect-[48/25] max-h-[58vh] min-h-[340px] sm:min-h-[420px] bg-[#07090F] rounded-2xl border border-black/20 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col relative">
             
             {/* Display Stage with AnimatePresence */}
-            <div className="relative flex-1 bg-[#05070C] overflow-hidden flex items-center justify-center">
+            <div className="relative flex-1 bg-[#07090F] overflow-hidden flex items-center justify-center">
               <AnimatePresence mode="wait">
                 
                 {/* =============================================================
@@ -208,7 +216,7 @@ export default function VideoShowcaseSection() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.99 }}
                     transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute inset-0 w-full h-full flex items-center justify-center bg-black"
+                    className="absolute inset-0 w-full h-full flex items-center justify-center bg-[#07090F]"
                   >
                     <video
                       ref={videoRef}
@@ -220,7 +228,7 @@ export default function VideoShowcaseSection() {
                       playsInline
                       preload="auto"
                       onTimeUpdate={handleTimeUpdate}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain bg-[#07090F]"
                     />
 
                     {/* Overlay Click-to-Play Handler */}
@@ -240,7 +248,7 @@ export default function VideoShowcaseSection() {
                 )}
 
                 {/* =============================================================
-                    TAB 2: 6-AGENT CONPTY PARALLEL TERMINAL GRID
+                    TAB 2: 6-AGENT CONPTY PARALLEL TERMINAL GRID (Live Typing MP4)
                     ============================================================= */}
                 {activeTab === 'grid' && (
                   <motion.div
@@ -251,17 +259,21 @@ export default function VideoShowcaseSection() {
                     transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                     className="absolute inset-0 w-full h-full flex items-center justify-center bg-[#07090F]"
                   >
-                    <img
-                      src="/images/forge-studio-grid.png"
-                      alt="Forge Studio 6-Agent Parallel Grid"
-                      loading="lazy"
-                      className="w-full h-full object-cover object-top"
+                    <video
+                      src="/videos/forge-agent-grid.mp4"
+                      poster="/images/forge-studio-grid.png"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                      className="w-full h-full object-contain bg-[#07090F]"
                     />
                   </motion.div>
                 )}
 
                 {/* =============================================================
-                    TAB 3: DAG WORKFLOW BEZIER CANVAS
+                    TAB 3: DAG WORKFLOW BEZIER CANVAS (Live Motion MP4)
                     ============================================================= */}
                 {activeTab === 'canvas' && (
                   <motion.div
@@ -272,11 +284,15 @@ export default function VideoShowcaseSection() {
                     transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                     className="absolute inset-0 w-full h-full flex items-center justify-center bg-[#07090F]"
                   >
-                    <img
-                      src="/images/forge-studio-canvas.png"
-                      alt="Forge Studio Multi-Agent DAG Canvas"
-                      loading="lazy"
-                      className="w-full h-full object-cover object-top"
+                    <video
+                      src="/videos/forge-dag-canvas.mp4"
+                      poster="/images/forge-studio-canvas.png"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                      className="w-full h-full object-contain bg-[#07090F]"
                     />
                   </motion.div>
                 )}

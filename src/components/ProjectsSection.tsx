@@ -40,6 +40,24 @@ const PROJECTS: ProjectCaseStudy[] = [
   },
   {
     number: '02',
+    title: 'Broadcast Design Telemetry Dashboard',
+    tagline: 'Cybernetic 3D Globe Radar & Diagnostics Command Console',
+    category: 'UI/UX & 3D WEBGL INTERACTION',
+    year: '2026',
+    description:
+      'A production cybernetic telemetry console featuring a high-performance interactive 3D WebGL globe, real-time radar ping simulations, broadcast system diagnostics, and luxury brutalist aerospace HUD aesthetics.',
+    metrics: [
+      { label: '3D Render Core', value: 'Three.js / WebGL 60FPS' },
+      { label: 'Diagnostics Feed', value: 'Real-Time Reactive' },
+      { label: 'Live Deployment', value: 'Active on Vercel' },
+    ],
+    tags: ['Next.js', 'React', 'Three.js', 'WebGL', 'Tailwind CSS', 'Framer Motion'],
+    image: '/images/broadcast-telemetry-dashboard.png',
+    liveUrl: 'https://broadcast-design-telemetry-dashboar.vercel.app/',
+    githubUrl: 'https://github.com/SohamBhagat',
+  },
+  {
+    number: '03',
     title: 'Verica Agentic OS',
     tagline: 'Token-Optimized Knowledge Graph & Desktop Assistant',
     category: 'AI AGENTS & OPERATING SYSTEMS',
@@ -57,7 +75,7 @@ const PROJECTS: ProjectCaseStudy[] = [
     githubUrl: 'https://github.com/SohamBhagat',
   },
   {
-    number: '03',
+    number: '04',
     title: 'HyperFrames Motion',
     tagline: 'Autonomous Motion Graphics & Kinetic Video Pipeline',
     category: 'VIDEO & MOTION ENGINEERING',
