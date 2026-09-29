@@ -51,7 +51,7 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
       />
 
       {/* Full-Width Header Stage */}
-      <div className="w-full max-w-[1520px] flex items-center justify-between relative bg-transparent pointer-events-auto">
+      <div className="w-full max-w-[1500px] flex items-center justify-between relative bg-transparent pointer-events-auto">
         
         {/* Left: Prominent SOHAM Wordmark with Terminal Accent Dot */}
         <div className="flex items-center shrink-0">
