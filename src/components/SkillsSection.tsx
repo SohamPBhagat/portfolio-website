@@ -264,7 +264,7 @@ export default function SkillsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeBayIdx, setActiveBayIdx] = useState<number>(0);
 
-  // Dedicated vertical runway for the horizontal tape animation
+  // Dedicated vertical runway for the horizontal tape animation (380vh for ample dwell time)
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
@@ -272,13 +272,13 @@ export default function SkillsSection() {
 
   // Smooth weighted spring for the horizontal runway glide
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 240,
-    damping: 32,
+    stiffness: 200,
+    damping: 30,
     restDelta: 0.001,
   });
 
   // Calculate the horizontal glide translation across the 4 bays
-  // Translates the tape from 0% to -75% as the user scrolls through the 320vh height
+  // Translates the tape from 0% to -75% as the user scrolls through the 380vh height
   const tapeTranslateX = useTransform(smoothProgress, [0, 1], ['0%', '-75%']);
 
   // Sync active bay indicator with scroll progression
@@ -294,13 +294,29 @@ export default function SkillsSection() {
     }
   });
 
+  const handleBayClick = (index: number) => {
+    setActiveBayIdx(index);
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const containerTop = rect.top + scrollTop;
+    const containerHeight = containerRef.current.offsetHeight;
+    const windowHeight = window.innerHeight;
+    const scrollableDistance = containerHeight - windowHeight;
+
+    const targetProgress = (index + 0.35) / 4;
+    const targetScrollY = containerTop + targetProgress * scrollableDistance;
+
+    window.scrollTo({ top: targetScrollY, behavior: 'smooth' });
+  };
+
   const activeBay = BLUEPRINT_BAYS[activeBayIdx];
 
   return (
     <section
       id="skills"
       ref={containerRef}
-      className="relative z-20 w-full bg-[#F6F5F2] text-[#111111] h-[320vh] border-t border-black/10 select-none"
+      className="relative z-20 w-full bg-[#F6F5F2] text-[#111111] h-[380vh] border-t-2 border-black/20 select-none"
     >
       {/* Subtle Dot Grid Background */}
       <div className="absolute inset-0 bg-[radial-gradient(#0000000a_1px,transparent_1px)] [background-size:28px_28px] pointer-events-none" />
@@ -314,7 +330,7 @@ export default function SkillsSection() {
         <div className="w-full max-w-[1600px] mx-auto flex items-center justify-between font-mono text-[11px] sm:text-xs uppercase tracking-[0.20em] text-neutral-500 pb-3.5 border-b border-black/10 shrink-0">
           <div className="flex items-center gap-1.5 text-neutral-800 font-semibold tracking-[0.20em]">
             <span className="text-black/30 font-light">&#123;</span>
-            <span>CREDENTIALS & TECHNICAL MATRIX</span>
+            <span>CREDENTIALS &amp; TECHNICAL MATRIX</span>
             <span className="text-black/30 font-light">&#125;</span>
           </div>
 
@@ -375,11 +391,14 @@ export default function SkillsSection() {
                 {BLUEPRINT_BAYS.map((bay, idx) => {
                   const isActive = activeBayIdx === idx;
                   return (
-                    <div
+                    <button
                       key={bay.id}
-                      className={`h-1.5 rounded-full transition-all duration-300 ${
-                        isActive ? 'bg-[#FF3B1D]' : 'bg-black/10'
+                      type="button"
+                      onClick={() => handleBayClick(idx)}
+                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                        isActive ? 'bg-[#FF3B1D] shadow-sm' : 'bg-black/10 hover:bg-black/25'
                       }`}
+                      title={`Jump to ${bay.title}`}
                     />
                   );
                 })}
