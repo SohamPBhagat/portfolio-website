@@ -13,16 +13,30 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
   // 'opening' -> off-white background with "SO [H portal] AM" (Eye Video active in H)
   // 'strobe'  -> Glitch tensor lattice active in H
   // 'expand'  -> soham.png active in H, expanding outward to fullscreen, SO & AM slide out
-  // 'ready'   -> Fullscreen hero active, headline letters pop up with randomized wave
+  // 'ready'   -> Fullscreen hero active, white & red dual-tone letters pop up in randomized wave
   const [stage, setStage] = useState<'opening' | 'strobe' | 'expand' | 'ready'>('opening');
   const [activeMediaIdx, setActiveMediaIdx] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Authoritative, monumental 2-line statement of craft & standards
+  // Authoritative 2-line statement with White & Red dual-tone styling
   const headlineLines = useMemo(
     () => [
-      "WHERE MATHEMATICAL RIGOR",
-      "MEETS FLAWLESS EXECUTION."
+      {
+        lineIdx: 0,
+        words: [
+          { text: 'WHERE', isAccent: false },
+          { text: 'MATHEMATICAL', isAccent: false },
+          { text: 'RIGOR', isAccent: false },
+        ],
+      },
+      {
+        lineIdx: 1,
+        words: [
+          { text: 'MEETS', isAccent: false },
+          { text: 'FLAWLESS', isAccent: true },
+          { text: 'EXECUTION.', isAccent: true },
+        ],
+      },
     ],
     []
   );
@@ -30,8 +44,10 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
   // Generate deterministic randomized character shuffle order for the pop-up wave
   const charDelays = useMemo(() => {
     let totalChars = 0;
-    headlineLines.forEach((line) => {
-      totalChars += line.replace(/\s/g, '').length;
+    headlineLines.forEach((l) => {
+      l.words.forEach((w) => {
+        totalChars += w.text.length;
+      });
     });
 
     const indices = Array.from({ length: totalChars }, (_, i) => i);
@@ -58,16 +74,16 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
   const preparedHeadline = useMemo(() => {
     let charIdx = 0;
     return headlineLines.map((line) => {
-      const words = line.split(' ');
-      return words.map((word) => {
-        const letters = word.split('').map((char) => {
+      const lineWords = line.words.map((w) => {
+        const letters = w.text.split('').map((char) => {
           const currentRank = charDelays[charIdx] || 0;
           const delay = 0.12 + currentRank * 0.016;
           charIdx++;
           return { char, delay };
         });
-        return { word, letters };
+        return { text: w.text, isAccent: w.isAccent, letters };
       });
+      return { lineIdx: line.lineIdx, words: lineWords };
     });
   }, [headlineLines, charDelays]);
 
@@ -308,7 +324,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
         )}
       </AnimatePresence>
 
-      {/* 🌟 3. MONUMENTAL EDITORIAL HEADLINE */}
+      {/* 🌟 3. MONUMENTAL DUAL-TONE (WHITE & RED) EDITORIAL HEADLINE */}
       <div
         className="relative z-10 w-full h-full flex flex-col justify-end items-center pb-12 sm:pb-16 md:pb-20 px-6 sm:px-10 pointer-events-none text-white"
         style={{ alignItems: 'center' }}
@@ -320,16 +336,20 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
           style={{ width: '100%', maxWidth: '1440px', marginInline: 'auto' }}
         >
           {/* 2-Line Kinetic Headline */}
-          <div className="w-full flex flex-col items-center space-y-1.5 sm:space-y-2.5">
-            {preparedHeadline.map((lineWords, lineIdx) => (
+          <div className="w-full flex flex-col items-center space-y-1 sm:space-y-2">
+            {preparedHeadline.map((line) => (
               <div
-                key={lineIdx}
+                key={line.lineIdx}
                 className="w-full flex flex-row flex-wrap justify-center items-center gap-x-[0.26em] sm:gap-x-[0.32em]"
               >
-                {lineWords.map((w, wordIdx) => (
+                {line.words.map((w, wordIdx) => (
                   <span
                     key={wordIdx}
-                    className="inline-flex items-center"
+                    className={`inline-flex items-center ${
+                      w.isAccent
+                        ? 'text-[#FF3B1D] drop-shadow-[0_2px_18px_rgba(255,59,29,0.5)]'
+                        : 'text-[#FFFFFF] drop-shadow-[0_3px_20px_rgba(0,0,0,0.9)]'
+                    }`}
                   >
                     {w.letters.map((l, charIdx) => (
                       <span
@@ -347,7 +367,7 @@ export default function IntroHero({ replayTrigger, onStateChange }: IntroHeroPro
                             delay: stage === 'ready' ? l.delay : 0,
                             ease: [0.16, 1, 0.3, 1],
                           }}
-                          className="inline-block font-sans font-extrabold uppercase text-[clamp(24px,4.0vw,58px)] leading-[1.04] tracking-[-0.03em] text-[#FFFFFF] drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)] will-change-transform"
+                          className="inline-block font-sans font-extrabold uppercase text-[clamp(24px,4.0vw,58px)] leading-[1.04] tracking-[-0.03em] will-change-transform"
                         >
                           {l.char}
                         </motion.span>
