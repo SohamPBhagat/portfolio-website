@@ -1,410 +1,440 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
-import { 
-  Code2, 
-  Cpu, 
-  Layers, 
-  GraduationCap, 
-  CheckCircle2, 
-  Sparkles,
-  Brain,
-  Terminal,
-  ArrowUpRight
-} from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { ArrowUpRight, Terminal, Brain, Layers, Cpu, ExternalLink } from 'lucide-react';
+import { GithubIcon } from '@/components/SocialIcons';
 
-interface StackCategory {
-  id: string;
-  tabLabel: string;
-  title: string;
-  subtitle: string;
-  icon: React.ReactNode;
-  pillarNumber: string;
-  pillarTitle: string;
-  pillarDescription: string;
-  pillarBadge: string;
-  skills: { name: string; level: string; note: string; proficiency: number }[];
+interface SpecRow {
+  name: string;
+  layer: string;
+  description: string;
+  deployedIn: string;
+  liveUrl?: string;
 }
 
-const STACK_CATEGORIES: StackCategory[] = [
+interface SpecDiscipline {
+  number: string;
+  id: string;
+  title: string;
+  tagline: string;
+  icon: React.ReactNode;
+  specs: SpecRow[];
+}
+
+const DISCIPLINES: SpecDiscipline[] = [
   {
-    id: 'languages',
-    tabLabel: 'Languages',
-    title: 'Core Languages & Runtimes',
-    subtitle: 'High-throughput backends, scripting & statistical computing',
-    icon: <Code2 className="w-4 h-4 text-[#FF3B1D]" />,
-    pillarNumber: '01',
-    pillarTitle: 'Data Science Theory & Statistical Rigor',
-    pillarDescription:
-      'Formal academic training at SPPU Department of Technology. Deep understanding of probability distributions, Bayesian inference, and statistical validity behind modern intelligence.',
-    pillarBadge: 'SPPU B.Sc. Data Science Track',
-    skills: [
-      { name: 'Python', level: 'Advanced', note: 'FastAPI, LangGraph, Scikit-Learn, PyTorch', proficiency: 95 },
-      { name: 'TypeScript', level: 'Advanced', note: 'Strict typing, Next.js, Electron, Node APIs', proficiency: 92 },
-      { name: 'JavaScript (ES6+)', level: 'Advanced', note: 'Event-loop multiplexing, asynchronous concurrency', proficiency: 94 },
-      { name: 'R', level: 'Honors', note: 'Statistical modeling, hypothesis testing, EDA', proficiency: 90 },
-      { name: 'SQL / SQLite', level: 'Proficient', note: 'Graph relation queries, zero-token memory structures', proficiency: 88 },
-      { name: 'C++ (Foundations)', level: 'Academic', note: 'Data structures, algorithmic complexity, memory', proficiency: 82 },
+    number: '01',
+    id: 'systems',
+    title: 'Systems & Low-Level Runtimes',
+    tagline: 'Windows pseudoconsole streaming, GPU terminal grids & worktree sandboxing',
+    icon: <Terminal className="w-4 h-4 text-[#FF3B1D]" />,
+    specs: [
+      {
+        name: 'ConPTY & node-pty',
+        layer: 'OS PTY Kernel',
+        description: 'Raw Windows pseudoconsole streaming, bidirectional ANSI escape parsing, and sub-20ms multiplexed terminal I/O in desktop apps.',
+        deployedIn: 'Forge Studio Parallel IDE',
+        liveUrl: 'https://www.forgeapi.org/',
+      },
+      {
+        name: 'xterm.js Engine',
+        layer: 'Terminal Emulation',
+        description: 'GPU-accelerated multi-pane terminal grid rendering, custom VT100 font metrics, and high-frequency stream buffering.',
+        deployedIn: 'Forge Studio Terminal Matrix',
+        liveUrl: 'https://www.forgeapi.org/',
+      },
+      {
+        name: 'Git Worktree Sandboxing',
+        layer: 'Version Control IPC',
+        description: 'Zero-collision parallel branch isolation per agent session, eliminating git merge lockups during concurrent agent code writes.',
+        deployedIn: 'Multi-Agent Sandbox Engine',
+        liveUrl: 'https://www.forgeapi.org/',
+      },
+      {
+        name: 'FastAPI & AsyncIO',
+        layer: 'Async Control Plane',
+        description: 'High-throughput non-blocking REST and WebSocket control servers with strict Pydantic data validation and sub-50ms latency.',
+        deployedIn: 'MediKiosk & Agent Daemons',
+        liveUrl: 'https://medikiosk-six.vercel.app/',
+      },
+      {
+        name: 'Electron & Node.js Core',
+        layer: 'Desktop Runtime',
+        description: 'Cross-process IPC architecture, local OS process spawning, background daemon management, and sandboxed native windows.',
+        deployedIn: 'Forge Studio Desktop App',
+        liveUrl: 'https://www.forgeapi.org/',
+      },
+      {
+        name: 'Faster-Whisper & FFmpeg',
+        layer: 'Audio/Video Engine',
+        description: 'Zero-API-cost local voice transcription daemons on-device paired with automated frame-accurate media composition pipelines.',
+        deployedIn: 'Clinical Triage & Media Pipelines',
+        liveUrl: 'https://medikiosk-six.vercel.app/',
+      },
     ],
   },
   {
-    id: 'frontend',
-    tabLabel: 'Frontend',
-    title: 'Frontend & Luxury Product Craft',
-    subtitle: 'Modern interfaces, micro-interactions & design systems',
-    icon: <Layers className="w-4 h-4 text-[#FF3B1D]" />,
-    pillarNumber: '02',
-    pillarTitle: 'High-Ticket Editorial Product Craft',
-    pillarDescription:
-      'Bridging deterministic code with luxury editorial aesthetics: liquid glass tokens, fluid spring physics, and production-ready Next.js 15 & Webflow client builds.',
-    pillarBadge: 'Awwwards-Tier Design Standards',
-    skills: [
-      { name: 'Next.js 15 (App Router)', level: 'Production', note: 'Server components, streaming SSR, edge runtime', proficiency: 96 },
-      { name: 'React 19', level: 'Production', note: 'Concurrent rendering, custom hooks, state stores', proficiency: 95 },
-      { name: 'Tailwind CSS', level: 'Mastery', note: 'Design systems, liquid glass tokens, responsive grids', proficiency: 98 },
-      { name: 'Framer Motion & GSAP', level: 'Production', note: 'Spring physics, layout animations, kinetic waves', proficiency: 94 },
-      { name: 'Webflow & CMS', level: 'Bespoke', note: 'High-converting client builds & semantic setups', proficiency: 92 },
-      { name: 'UI/UX & Figma', level: 'Editorial', note: 'Typography hierarchy, design tokens, wireframing', proficiency: 90 },
-    ],
-  },
-  {
-    id: 'tooling',
-    tabLabel: 'Autonomous Systems',
-    title: 'Autonomous Systems & Low-Level Tooling',
-    subtitle: 'Agentic runtimes, terminal multiplexers & video engines',
-    icon: <Cpu className="w-4 h-4 text-[#FF3B1D]" />,
-    pillarNumber: '03',
-    pillarTitle: 'Low-Level Autonomous Runtimes',
-    pillarDescription:
-      'Architecting deep developer infrastructure: raw ConPTY streaming, multi-pane terminal grid multiplexers, and per-session Git worktree isolation for parallel AI coding agents.',
-    pillarBadge: 'Shipped Forge Studio & Verica OS',
-    skills: [
-      { name: 'ConPTY & node-pty', level: 'Specialization', note: 'Raw pseudo-terminal streaming in desktop apps', proficiency: 95 },
-      { name: 'xterm.js', level: 'Production', note: 'GPU-accelerated multi-pane terminal grids', proficiency: 93 },
-      { name: 'Git Worktree Architecture', level: 'Specialization', note: 'Zero-collision branch isolation per agent session', proficiency: 96 },
-      { name: 'FastAPI & Async IO', level: 'Production', note: 'Sub-50ms REST/WebSocket agent control planes', proficiency: 92 },
-      { name: 'Faster-Whisper & Edge-TTS', level: 'Local Daemon', note: 'Zero-API-cost on-device speech intelligence', proficiency: 89 },
-      { name: 'Remotion & FFmpeg', level: 'Pipeline Core', note: 'Automated video composition & kinetic typography', proficiency: 91 },
-    ],
-  },
-  {
-    id: 'theory',
-    tabLabel: 'Data Science & Theory',
-    title: 'Data Science & Statistical Theory',
-    subtitle: 'Academic foundation from SPPU Department of Technology',
+    number: '02',
+    id: 'datascience',
+    title: 'Statistical Theory & Mathematical Rigor',
+    tagline: 'Probability distributions, Bayesian inference & relational database architectures',
     icon: <Brain className="w-4 h-4 text-[#FF3B1D]" />,
-    pillarNumber: '04',
-    pillarTitle: 'Academic Rigor & Theoretical Foundation',
-    pillarDescription:
-      'Formal 4-year undergraduate track in Data Science at Savitribai Phule Pune University. Grounded in mathematical foundations, statistical analytics, and database management.',
-    pillarBadge: 'SPPU 2nd Year Honors (2024–2028)',
-    skills: [
-      { name: 'Statistical Analytics', level: 'SPPU Honors', note: 'Probability theory, Bayesian reasoning, regression', proficiency: 94 },
-      { name: 'Data Visualization', level: 'SPPU Honors', note: 'ggplot2, Matplotlib, Seaborn, interactive dashboards', proficiency: 92 },
-      { name: 'Database Management', level: 'SPPU Honors', note: 'Relational schemas, normalization, query optimization', proficiency: 90 },
-      { name: 'Machine Learning Pipelines', level: 'Applied', note: 'Data preprocessing, feature engineering, evaluation', proficiency: 88 },
-      { name: 'Exploratory Data Analysis', level: 'Applied', note: 'Multivariate distributions, anomaly detection', proficiency: 91 },
-      { name: 'Algorithmic Complexity', level: 'Foundational', note: 'Big-O bounds, cache locality, memory patterns', proficiency: 86 },
+    specs: [
+      {
+        name: 'Statistical Inference & Probability',
+        layer: 'Theoretical Core',
+        description: 'Formal academic training in probability distributions, Bayesian estimation, hypothesis testing, ANOVA, and confidence bounds.',
+        deployedIn: 'SPPU Department of Technology',
+      },
+      {
+        name: 'Python Scientific Stack',
+        layer: 'Vectorized Computing',
+        description: 'NumPy, Pandas, and Scikit-Learn for matrix transformations, feature engineering pipelines, and classical predictive modeling.',
+        deployedIn: 'Predictive ML & Analytics',
+      },
+      {
+        name: 'R Scientific Modeling',
+        layer: 'Statistical Lab',
+        description: 'Rigorous exploratory data analysis (EDA), multivariate regression modeling, distribution testing, and formal statistical reports.',
+        deployedIn: 'SPPU Honors Coursework',
+      },
+      {
+        name: 'Relational Database Systems (RDBMS)',
+        layer: 'Schema Architecture',
+        description: '3NF normalization, index optimization, query execution plan analysis, ACID transactions, and zero-token SQLite graphs.',
+        deployedIn: 'SPPU DBMS & Local Knowledge DB',
+      },
+      {
+        name: 'Multivariate EDA & Data Viz',
+        layer: 'Analytical Synthesis',
+        description: 'ggplot2, Matplotlib, and Seaborn for high-density publication-grade statistical distribution visuals and correlation matrices.',
+        deployedIn: 'Academic Research & Telemetry',
+      },
+      {
+        name: 'Algorithmic Complexity & Bounds',
+        layer: 'Foundational Rigor',
+        description: 'Big-O asymptotic bounds, cache locality, memory layout constraints, and tree/graph search dynamics under data-intensive loads.',
+        deployedIn: 'SPPU Computing Curriculum',
+      },
+    ],
+  },
+  {
+    number: '03',
+    id: 'frontend',
+    title: 'Frontend & 3D WebGL Interaction',
+    tagline: 'Hardware-accelerated Three.js shaders, Next.js 15 SSR & spring physics',
+    icon: <Layers className="w-4 h-4 text-[#FF3B1D]" />,
+    specs: [
+      {
+        name: 'Next.js 15 (App Router)',
+        layer: 'Production Web Core',
+        description: 'Server Components, streaming SSR, parallel routes, dynamic interceptors, and edge caching for sub-100ms first contentful paint.',
+        deployedIn: 'MediKiosk & Telemetry Web Apps',
+        liveUrl: 'https://medikiosk-six.vercel.app/',
+      },
+      {
+        name: 'React 19 Concurrent Mode',
+        layer: 'Reactive UI Core',
+        description: 'Concurrent transitions, optimistic updates, custom hook abstractions, and predictable unidirectional data pipelines.',
+        deployedIn: 'Production Applications',
+      },
+      {
+        name: 'Three.js & WebGL Shaders',
+        layer: 'Hardware 3D Graphics',
+        description: 'Procedural geometry coordinates, real-time radar sweep shaders, camera matrix math, and buttery 60 FPS rendering under load.',
+        deployedIn: 'Broadcast Telemetry Dashboard',
+        liveUrl: 'https://broadcast-design-telemetry-dashboar.vercel.app/',
+      },
+      {
+        name: 'Tailwind CSS Design Tokens',
+        layer: 'Design System Architecture',
+        description: 'Fluid typographic scales, Swiss brutalist hairline borders, dark aerospace palettes, and custom tokenized component systems.',
+        deployedIn: 'High-Ticket UI/UX Interfaces',
+      },
+      {
+        name: 'Framer Motion & Spring Physics',
+        layer: 'Kinetic Interaction',
+        description: 'Damped harmonic spring animations, layout projection transitions, scroll-linked choreography, and tactile micro-interactions.',
+        deployedIn: 'Motion Systems & Interactive Demos',
+      },
+      {
+        name: 'Figma & Editorial UI/UX',
+        layer: 'Interface Craft',
+        description: 'Precision wireframing, typography rhythm, auto-layout token components, spatial hierarchy, and high-fidelity prototypes.',
+        deployedIn: 'Bespoke Client & Product Builds',
+      },
+    ],
+  },
+  {
+    number: '04',
+    id: 'applied_ai',
+    title: 'Applied AI & Clinical Protocols',
+    tagline: 'Multi-agent orchestration, regional Indic Whisper ASR & FHIR R4 clinical schemas',
+    icon: <Cpu className="w-4 h-4 text-[#FF3B1D]" />,
+    specs: [
+      {
+        name: 'Multi-Agent Parallel Orchestration',
+        layer: 'Agentic Infrastructure',
+        description: 'Simultaneous dispatching and monitoring of autonomous AI agents (Claude Code, AGY CLI) across isolated workspace environments.',
+        deployedIn: 'Forge Studio Parallel Engine',
+        liveUrl: 'https://www.forgeapi.org/',
+      },
+      {
+        name: 'Indic Whisper & Ambient Voice ASR',
+        layer: 'Clinical Voice Triage',
+        description: 'Real-time multilingual voice transcription in regional Indian languages, filtering acoustic noise for accurate clinical intake.',
+        deployedIn: 'MediKiosk Clinical OS',
+        liveUrl: 'https://medikiosk-six.vercel.app/',
+      },
+      {
+        name: 'FHIR R4 & ABDM Clinical Protocols',
+        layer: 'Health Informatics',
+        description: 'Structured JSON-LD schema parsing, HL7 compliance, diagnostic differential pathways, and Ayushman Bharat Digital Mission interoperability.',
+        deployedIn: 'MediKiosk Health Stack',
+        liveUrl: 'https://medikiosk-six.vercel.app/',
+      },
+      {
+        name: 'Token-Optimized Knowledge Graphs',
+        layer: 'Prompt Compression',
+        description: 'On-demand SQLite relational graph extraction that yields compact ~200 token context slices, avoiding bloated prompt dumps.',
+        deployedIn: 'Local Knowledge Agent Systems',
+      },
+      {
+        name: 'LangGraph & Cyclical Tool Workflows',
+        layer: 'Deterministic Agent Graphs',
+        description: 'Cyclical state machines, structured schema validation, programmatic error recovery loops, and deterministic tool dispatching.',
+        deployedIn: 'Autonomous Agent Pipelines',
+      },
+      {
+        name: 'Clinical SOAP Note Synthesis',
+        layer: 'Clinical Decision Support',
+        description: 'Automated extraction of patient dialogue into structured Subjective, Objective, Assessment, and Plan records for physician review.',
+        deployedIn: 'MediKiosk Doctor Copilot',
+        liveUrl: 'https://medikiosk-six.vercel.app/',
+      },
     ],
   },
 ];
 
 export default function SkillsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [activeCategoryIdx, setActiveCategoryIdx] = useState<number>(0);
+  const [hoveredSpec, setHoveredSpec] = useState<string | null>(null);
 
-  // Dedicated scroll runway for Section 6
+  // Track natural scroll progress through Section 6
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ['start start', 'end end'],
+    offset: ['start 85%', 'end 30%'],
   });
 
-  // Smoothly sync scroll progress across the 4 technical domains
-  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    if (latest < 0.25) {
-      setActiveCategoryIdx(0);
-    } else if (latest < 0.50) {
-      setActiveCategoryIdx(1);
-    } else if (latest < 0.75) {
-      setActiveCategoryIdx(2);
-    } else {
-      setActiveCategoryIdx(3);
-    }
+  // Smooth spring laser-scanline tracking your scroll
+  const smoothLaserProgress = useSpring(scrollYProgress, {
+    stiffness: 280,
+    damping: 35,
+    restDelta: 0.001,
   });
 
-  const activeCategory = STACK_CATEGORIES[activeCategoryIdx];
+  const laserScaleY = useTransform(smoothLaserProgress, [0, 1], [0.05, 1]);
 
   return (
     <section
       id="skills"
       ref={containerRef}
-      className="relative z-20 bg-[#F6F5F2] text-[#111111] h-[220vh] border-t border-black/10 select-none"
+      className="relative z-20 w-full bg-[#F6F5F2] text-[#111111] py-28 sm:py-36 lg:py-44 border-t border-black/10 select-none flex flex-col items-center"
     >
-      {/* Architectural Blueprint Dot Grid */}
+      {/* Subtle Dot Grid Background */}
       <div className="absolute inset-0 bg-[radial-gradient(#0000000a_1px,transparent_1px)] [background-size:28px_28px] pointer-events-none" />
 
-      {/* Sticky Fullscreen Viewport Stage */}
-      <div className="sticky top-0 h-screen w-full flex flex-col justify-center items-center px-6 sm:px-10 lg:px-14 xl:px-20 overflow-hidden bg-[#F6F5F2]">
-        
-        {/* Symmetrical Container matching Sections 4 & 5 */}
-        <div className="w-full max-w-[1600px] mx-auto flex flex-col self-center">
-          
-          {/* =====================================================================
-              TOP MASTHEAD — Edge-to-Edge Aligned Symmetrical Bar
-              ===================================================================== */}
-          <div className="w-full relative flex items-center justify-between font-mono text-[11px] sm:text-xs uppercase tracking-[0.20em] text-neutral-500 pb-3.5 border-b border-black/10 mb-6 lg:mb-8">
-            <div className="flex items-center gap-1.5 text-neutral-800 font-semibold tracking-[0.20em]">
-              <span className="text-black/30 font-light">&#123;</span>
-              <span>SKILLS & CREDENTIALS</span>
-              <span className="text-black/30 font-light">&#125;</span>
-            </div>
-
-            <div className="absolute left-1/2 -translate-x-1/2 flex items-center text-[#FF3B1D] text-sm animate-pulse">
-              <span>&#9830;</span>
-            </div>
-
-            <div className="flex items-center gap-1.5 text-neutral-800 font-semibold tracking-[0.20em]">
-              <span className="text-black/30 font-light">&#123;</span>
-              <span>06 // TECHNICAL MATRIX</span>
-              <span className="text-black/30 font-light">&#125;</span>
-            </div>
+      {/* Main Symmetrical Container */}
+      <div className="relative w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-20 self-center flex flex-col">
+        {/* =====================================================================
+            TOP MASTHEAD (Edge-to-Edge Aligned Symmetrical Bar)
+            ===================================================================== */}
+        <div className="w-full relative flex items-center justify-between font-mono text-[11px] sm:text-xs uppercase tracking-[0.20em] text-neutral-500 pb-3.5 border-b border-black/10 mb-12 sm:mb-16">
+          <div className="flex items-center gap-1.5 text-neutral-800 font-semibold tracking-[0.20em]">
+            <span className="text-black/30 font-light">&#123;</span>
+            <span>CREDENTIALS & TECHNICAL MATRIX</span>
+            <span className="text-black/30 font-light">&#125;</span>
           </div>
 
-          {/* Section Header */}
-          <div className="mb-6 lg:mb-8 space-y-1.5">
-            <div className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-[#FF3B1D] font-semibold flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B1D] animate-ping" />
-              <span>THE ARCHITECTURAL ARSENAL & UNIQUE EDGE</span>
-            </div>
-            <h2 className="font-sans font-medium text-2xl sm:text-3xl lg:text-4xl tracking-tight text-[#111111]">
-              What Makes My Engineering Unique
-            </h2>
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center text-[#FF3B1D] text-sm animate-pulse">
+            <span>&#9830;</span>
           </div>
 
-          {/* =====================================================================
-              MAIN BALANCED 5/7 WORKBENCH STAGE
-              ===================================================================== */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
-            
-            {/* ── LEFT CONSOLE: 4 Interactive Category Pillars (5 Cols) ── */}
-            <div className="lg:col-span-5 space-y-2.5 sm:space-y-3">
-              {STACK_CATEGORIES.map((cat, idx) => {
-                const isActive = activeCategoryIdx === idx;
+          <div className="flex items-center gap-1.5 text-neutral-800 font-semibold tracking-[0.20em]">
+            <span className="text-black/30 font-light">&#123;</span>
+            <span>06 // TECHNICAL ARSENAL</span>
+            <span className="text-black/30 font-light">&#125;</span>
+          </div>
+        </div>
 
-                return (
-                  <div
-                    key={cat.id}
-                    onMouseEnter={() => setActiveCategoryIdx(idx)}
-                    onClick={() => setActiveCategoryIdx(idx)}
-                    className={`w-full p-3.5 sm:p-4 rounded-2xl transition-all duration-300 relative group cursor-pointer border ${
-                      isActive
-                        ? 'bg-white border-black/15 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.06)]'
-                        : 'bg-transparent border-black/5 hover:border-black/15 hover:bg-white/40'
-                    }`}
-                  >
-                    {/* Left Crimson Active Indicator Bar */}
-                    {isActive && (
-                      <motion.div
-                        layoutId="activePillarBar"
-                        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                        className="absolute left-0 top-3 bottom-3 w-1.5 bg-[#FF3B1D] rounded-r shadow-sm"
-                      />
-                    )}
+        {/* Section Header */}
+        <div className="w-full mb-16 sm:mb-24 space-y-3">
+          <div className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-[#FF3B1D] font-semibold flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B1D] animate-ping" />
+            <span>SWISS INDUSTRIAL SPECIFICATION TABLE</span>
+          </div>
+          <h2 className="font-sans font-medium text-3xl sm:text-5xl lg:text-6xl tracking-tight text-[#111111] leading-[1.05]">
+            Engineering Stack & Deployed Runtimes
+          </h2>
+          <p className="text-neutral-500 text-sm sm:text-base font-sans pt-1 max-w-2xl leading-relaxed">
+            Industrial catalog of verified production tooling, low-level desktop runtimes, and theoretical computing foundations.
+          </p>
+        </div>
 
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="space-y-1 pl-2 min-w-0 flex-1">
-                        <div className="flex items-center gap-2.5">
-                          <span
-                            className={`font-mono text-xs font-bold tracking-wider transition-colors shrink-0 ${
-                              isActive ? 'text-[#FF3B1D]' : 'text-neutral-400 group-hover:text-neutral-600'
-                            }`}
-                          >
-                            [ {cat.pillarNumber} ]
-                          </span>
-                          <h3
-                            className={`font-sans text-sm sm:text-base lg:text-[17px] tracking-tight transition-colors ${
-                              isActive
-                                ? 'font-semibold text-[#111111]'
-                                : 'font-normal text-neutral-600 group-hover:text-black'
-                            }`}
-                          >
-                            {cat.pillarTitle}
-                          </h3>
-                        </div>
+        {/* =====================================================================
+            THE SWISS INDUSTRIAL SPEC TABLE (CARD-FREE, SCROLL-ANIMATED)
+            ===================================================================== */}
+        <div className="relative w-full flex">
+          {/* ── Left Animated Scroll Laser Scan Track ── */}
+          <div className="hidden md:block w-8 shrink-0 relative mr-6 lg:mr-10">
+            {/* Background hairline guide rail */}
+            <div className="absolute left-3 top-0 bottom-0 w-[1.5px] bg-black/10" />
 
-                        <p className="font-sans text-[11px] sm:text-xs text-neutral-500 pl-7 leading-relaxed line-clamp-2">
-                          {cat.pillarDescription}
-                        </p>
+            {/* Active Scroll Laser Scanline */}
+            <motion.div
+              style={{ scaleY: laserScaleY, originY: 0 }}
+              className="absolute left-3 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#FF3B1D] via-[#FF3B1D] to-orange-400 shadow-[0_0_8px_rgba(255,59,29,0.5)]"
+            />
 
-                        <div className="pl-7 pt-1 flex items-center gap-1.5 text-[10px] font-mono text-[#FF3B1D]">
-                          <CheckCircle2 size={11} className="shrink-0" />
-                          <span className="font-medium tracking-wide truncate">{cat.pillarBadge}</span>
-                        </div>
-                      </div>
+            {/* Glowing Laser Bead */}
+            <motion.div
+              style={{
+                top: useTransform(smoothLaserProgress, [0, 1], ['0%', '100%']),
+              }}
+              className="absolute left-[7px] -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-[#FF3B1D] border-2 border-white shadow-[0_0_12px_#FF3B1D]"
+            />
+          </div>
 
-                      <div
-                        className={`shrink-0 transition-all duration-300 pt-1 ${
-                          isActive
-                            ? 'opacity-100 text-[#FF3B1D] translate-x-0'
-                            : 'opacity-0 -translate-x-2 text-neutral-400 group-hover:opacity-40'
-                        }`}
-                      >
-                        <ArrowUpRight size={16} />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* SPPU University Credential Mini-Banner */}
-              <div className="w-full p-3 sm:p-3.5 rounded-2xl bg-[#0B0E14] text-white border border-white/10 flex items-center justify-between gap-3 shadow-md">
-                <div className="flex items-center gap-2.5 pl-1">
-                  <div className="p-1.5 rounded-lg bg-[#FF3B1D]/20 text-[#FF3B1D] shrink-0">
-                    <GraduationCap size={16} />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-sans font-semibold text-xs sm:text-sm text-white tracking-tight truncate">
-                      B.Sc. Data Science @ SPPU
-                    </div>
-                    <div className="font-mono text-[9px] sm:text-[10px] text-neutral-400 truncate">
-                      Dept of Technology &bull; 2nd Year (2024–2028)
-                    </div>
-                  </div>
-                </div>
-
-                <div className="shrink-0 px-2.5 py-1 rounded-md bg-white/10 border border-white/10 font-mono text-[9px] font-bold text-emerald-400">
-                  Honors Track
-                </div>
-              </div>
-            </div>
-
-            {/* ── RIGHT CONSOLE: Deep Technical Matrix Terminal (7 Cols) ── */}
-            <div className="lg:col-span-7">
-              <div className="w-full bg-[#0A0D15] rounded-2xl border border-black/15 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.18)] overflow-hidden flex flex-col relative">
-                
-                {/* Top macOS Control Bar */}
-                <div className="h-11 bg-[#07090F] border-b border-white/10 px-4 sm:px-5 flex items-center justify-between select-none shrink-0 z-20">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] border border-black/20" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] border border-black/20" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F] border border-black/20" />
-                    <span className="ml-2 font-mono text-[10px] sm:text-[11px] text-white/60 tracking-wider">
-                      MATRIX://{activeCategory.id} &bull; {activeCategory.skills.length} TECHNOLOGIES
+          {/* ── Main Spec Table Body ── */}
+          <div className="flex-1 w-full space-y-16 sm:space-y-20">
+            {DISCIPLINES.map((discipline, dIdx) => (
+              <motion.div
+                key={discipline.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.5, delay: dIdx * 0.08 }}
+                className="w-full"
+              >
+                {/* Discipline Header Bar */}
+                <div className="pb-4 border-b-2 border-black/15 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                  <div className="flex items-start sm:items-center gap-3.5">
+                    <span className="font-mono text-xl sm:text-2xl font-bold text-[#FF3B1D] tracking-tight">
+                      [ {discipline.number} ]
                     </span>
-                  </div>
-
-                  {/* View Tabs */}
-                  <div className="flex items-center gap-1">
-                    {STACK_CATEGORIES.map((cat, idx) => {
-                      const isSelected = activeCategoryIdx === idx;
-                      return (
-                        <button
-                          key={cat.id}
-                          type="button"
-                          onClick={() => setActiveCategoryIdx(idx)}
-                          className={`relative px-2.5 py-1 rounded-md font-mono text-[10px] tracking-wider transition-all duration-200 cursor-pointer ${
-                            isSelected
-                              ? 'text-white font-bold bg-[#FF3B1D]'
-                              : 'text-neutral-400 hover:text-white hover:bg-white/5'
-                          }`}
-                        >
-                          0{idx + 1}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Subheader Title Inside Terminal */}
-                <div className="px-5 py-3 bg-[#080B11] border-b border-white/5 flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="p-1.5 rounded-lg bg-white/5">
-                      {activeCategory.icon}
-                    </div>
                     <div>
-                      <h4 className="font-sans font-semibold text-xs sm:text-sm text-white">
-                        {activeCategory.title}
-                      </h4>
-                      <p className="font-mono text-[10px] text-neutral-400">
-                        {activeCategory.subtitle}
+                      <h3 className="font-sans font-semibold text-xl sm:text-2xl lg:text-3xl text-[#111111] tracking-tight">
+                        {discipline.title}
+                      </h3>
+                      <p className="font-mono text-[11px] sm:text-xs text-neutral-500 pt-0.5">
+                        {discipline.tagline}
                       </p>
                     </div>
                   </div>
 
-                  <span className="font-mono text-[9px] uppercase tracking-wider text-emerald-400 px-2 py-0.5 rounded bg-emerald-400/10 border border-emerald-400/20">
-                    Active Stack
-                  </span>
-                </div>
-
-                {/* Skills Grid: Clean 2-Col or 3-Col Matrix Stage */}
-                <div className="p-4 sm:p-5 relative bg-[#05070C] min-h-[300px]">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeCategory.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                      className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-                    >
-                      {activeCategory.skills.map((skill, sIdx) => (
-                        <div
-                          key={sIdx}
-                          className="p-3 sm:p-3.5 rounded-xl bg-[#0D111A] border border-white/5 hover:border-[#FF3B1D]/30 transition-all duration-300 space-y-2 group/card"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="font-sans font-bold text-xs sm:text-[13px] text-white group-hover/card:text-[#FF3B1D] transition-colors">
-                              {skill.name}
-                            </span>
-                            <span className="font-mono text-[9px] font-semibold text-[#FF3B1D] bg-[#FF3B1D]/15 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                              {skill.level}
-                            </span>
-                          </div>
-
-                          {/* Progress Track */}
-                          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${skill.proficiency}%` }}
-                              transition={{ duration: 0.6, delay: sIdx * 0.04 }}
-                              className="h-full bg-[#FF3B1D] rounded-full"
-                            />
-                          </div>
-
-                          <p className="text-[10px] sm:text-[11px] text-neutral-400 font-sans leading-relaxed">
-                            {skill.note}
-                          </p>
-                        </div>
-                      ))}
-                    </motion.div>
-                  </AnimatePresence>
-
-                  {/* Technical Corner Brackets */}
-                  <div className="absolute top-2 left-2 w-2.5 h-2.5 border-t border-l border-white/40 pointer-events-none" />
-                  <div className="absolute top-2 right-2 w-2.5 h-2.5 border-t border-r border-white/40 pointer-events-none" />
-                  <div className="absolute bottom-2 left-2 w-2.5 h-2.5 border-b border-l border-white/40 pointer-events-none" />
-                  <div className="absolute bottom-2 right-2 w-2.5 h-2.5 border-b border-r border-white/40 pointer-events-none" />
-                </div>
-
-                {/* Bottom Terminal Status Bar */}
-                <div className="h-8 bg-[#07090F] border-t border-white/10 px-4 flex items-center justify-between text-[10px] font-mono text-neutral-400 select-none">
-                  <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>STATUS: ALL RUNTIMES VERIFIED</span>
+                  <div className="flex items-center gap-2 self-start sm:self-auto font-mono text-[10px] sm:text-[11px] text-neutral-500 uppercase tracking-wider">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span>06 VERIFIED RUNTIMES</span>
                   </div>
-                  <span className="text-neutral-500 hidden sm:inline">
-                    SPPU DEPT OF TECHNOLOGY &bull; PUNE, IN
-                  </span>
                 </div>
 
-              </div>
-            </div>
+                {/* Table Column Subheaders */}
+                <div className="hidden lg:grid grid-cols-12 gap-4 py-2.5 px-4 font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-600 border-b border-black/10 bg-black/[0.015]">
+                  <div className="col-span-3">TECHNOLOGY &bull; RUNTIME LAYER</div>
+                  <div className="col-span-6">TECHNICAL SCOPE &bull; OPERATIONAL ARCHITECTURE</div>
+                  <div className="col-span-3 text-right">DEPLOYED SYSTEM PROOF</div>
+                </div>
 
+                {/* Spec Rows */}
+                <div className="divide-y divide-black/10 border-b border-black/15">
+                  {discipline.specs.map((spec, sIdx) => {
+                    const isHovered = hoveredSpec === `${discipline.id}-${sIdx}`;
+
+                    return (
+                      <div
+                        key={spec.name}
+                        onMouseEnter={() => setHoveredSpec(`${discipline.id}-${sIdx}`)}
+                        onMouseLeave={() => setHoveredSpec(null)}
+                        className={`group transition-all duration-200 py-4 px-3 sm:px-4 rounded-xl cursor-default ${
+                          isHovered ? 'bg-white shadow-[0_4px_20px_-5px_rgba(0,0,0,0.06)]' : 'hover:bg-white/60'
+                        }`}
+                      >
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 sm:gap-4 items-start lg:items-center">
+                          {/* Col 1: Name & Layer Badge (3 cols) */}
+                          <div className="lg:col-span-3 flex flex-col justify-center">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                                  isHovered ? 'bg-[#FF3B1D]' : 'bg-black/20'
+                                }`}
+                              />
+                              <span className="font-sans font-bold text-sm sm:text-[15px] text-[#111111] group-hover:text-[#FF3B1D] transition-colors tracking-tight">
+                                {spec.name}
+                              </span>
+                            </div>
+                            <span className="font-mono text-[10px] text-neutral-500 uppercase tracking-wider pl-3.5 pt-0.5">
+                              {spec.layer}
+                            </span>
+                          </div>
+
+                          {/* Col 2: Technical Scope & Utility (6 cols) */}
+                          <div className="lg:col-span-6 pl-3.5 lg:pl-0">
+                            <p className="font-sans text-xs sm:text-[13px] text-neutral-600 leading-relaxed group-hover:text-neutral-900 transition-colors">
+                              {spec.description}
+                            </p>
+                          </div>
+
+                          {/* Col 3: Deployed System Citation (3 cols) */}
+                          <div className="lg:col-span-3 pl-3.5 lg:pl-0 flex items-center lg:justify-end">
+                            {spec.liveUrl ? (
+                              <a
+                                href={spec.liveUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold text-neutral-700 hover:text-[#FF3B1D] transition-colors group/link"
+                              >
+                                <span>{spec.deployedIn}</span>
+                                <ArrowUpRight className="w-3 h-3 text-neutral-400 group-hover/link:text-[#FF3B1D] group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+                              </a>
+                            ) : (
+                              <span className="font-mono text-[11px] text-neutral-500 font-medium">
+                                {spec.deployedIn}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            ))}
           </div>
-
         </div>
 
+        {/* =====================================================================
+            MINIMALIST INDUSTRIAL FOOTER STRIP
+            ===================================================================== */}
+        <div className="w-full mt-16 sm:mt-24 pt-8 border-t border-black/15 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-neutral-500">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className="font-semibold text-neutral-800 tracking-wide">
+              24 VERIFIED RUNTIMES &bull; 100% PRODUCTION PROVEN
+            </span>
+          </div>
+
+          <a
+            href="https://github.com/SohamPBhagat"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 text-neutral-700 hover:text-black font-semibold transition-colors"
+          >
+            <GithubIcon className="w-3.5 h-3.5" />
+            <span>Audit Repositories on GitHub</span>
+            <ArrowUpRight className="w-3 h-3" />
+          </a>
+        </div>
       </div>
     </section>
   );
