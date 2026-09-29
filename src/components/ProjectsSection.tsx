@@ -92,7 +92,7 @@ export default function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="relative z-20 w-full bg-[#F6F5F2] text-[#111111] py-24 sm:py-32 lg:py-36 border-t border-black/10 select-none flex flex-col items-center"
+      className="relative z-20 w-full bg-[#F6F5F2] text-[#111111] py-32 sm:py-48 lg:py-56 border-t border-black/10 select-none flex flex-col items-center"
     >
       {/* Subtle Dot Grid Background */}
       <div className="absolute inset-0 bg-[radial-gradient(#0000000a_1px,transparent_1px)] [background-size:28px_28px] pointer-events-none" />
@@ -102,7 +102,7 @@ export default function ProjectsSection() {
         {/* =====================================================================
             TOP MASTHEAD (Edge-to-Edge Aligned Symmetrical Bar)
             ===================================================================== */}
-        <div className="w-full relative flex items-center justify-between font-mono text-[11px] sm:text-xs uppercase tracking-[0.20em] text-neutral-500 pb-3.5 border-b border-black/10 mb-10 sm:mb-14">
+        <div className="w-full relative flex items-center justify-between font-mono text-[11px] sm:text-xs uppercase tracking-[0.20em] text-neutral-500 pb-3.5 border-b border-black/10 mb-12 sm:mb-16">
           <div className="flex items-center gap-1.5 text-neutral-800 font-semibold tracking-[0.20em]">
             <span className="text-black/30 font-light">&#123;</span>
             <span>SELECTED WORKS & ARCHITECTURES</span>
@@ -121,7 +121,7 @@ export default function ProjectsSection() {
         </div>
 
         {/* Section Header */}
-        <div className="w-full mb-16 sm:mb-20 space-y-3">
+        <div className="w-full mb-20 sm:mb-28 space-y-3">
           <div className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-[#FF3B1D] font-semibold flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B1D] animate-ping" />
             <span>CASE STUDIES & PRODUCTION ARCHITECTURES</span>
@@ -138,7 +138,7 @@ export default function ProjectsSection() {
             EXPANSIVE NON-STACKING ARCHITECTURAL CASE STUDIES
             Each project has generous breathing room and zero overlapping borders.
             ===================================================================== */}
-        <div className="w-full space-y-20 sm:space-y-28 pb-8">
+        <div className="w-full space-y-32 sm:space-y-44 lg:space-y-56 pb-20 sm:pb-32">
           {PROJECTS.map((proj, idx) => {
             const isReversed = idx % 2 === 1;
 
@@ -149,7 +149,7 @@ export default function ProjectsSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-80px' }}
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full rounded-3xl bg-white border border-black/10 p-6 sm:p-10 lg:p-12 xl:p-14 shadow-[0_12px_45px_-15px_rgba(0,0,0,0.06)] hover:border-black/25 hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.10)] transition-all duration-500"
+                className="w-full rounded-3xl bg-white border border-black/10 p-7 sm:p-11 lg:p-14 xl:p-16 shadow-[0_12px_45px_-15px_rgba(0,0,0,0.06)] hover:border-black/25 hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.10)] transition-all duration-500"
               >
                 {/* Case Study Meta Top Bar */}
                 <div className="flex flex-wrap items-center justify-between gap-4 pb-6 sm:pb-8 border-b border-black/10">
