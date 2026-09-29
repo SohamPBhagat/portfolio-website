@@ -43,13 +43,13 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-opacity duration-500 ${
         isVisibleInHero ? 'opacity-100' : 'opacity-0 pointer-events-none'
-      } pt-5 sm:pt-6 pb-2 px-6 sm:px-10 lg:px-14 xl:px-18 pointer-events-none flex justify-center`}
+      } pt-5 sm:pt-6 pb-2 px-6 sm:px-10 lg:px-14 xl:px-20 pointer-events-none flex justify-center`}
     >
-      {/* 100% Transparent Full-Width Architectural Grid Header */}
+      {/* 100% Transparent Full-Width Header */}
       <div className="w-full max-w-[1520px] flex items-center justify-between relative bg-transparent pointer-events-auto">
         
         {/* Left: SOHAM Brandmark (Always pinned and visible on scroll) */}
-        <div className="flex items-center">
+        <div className="flex items-center shrink-0">
           <a
             href="#hero"
             onClick={(e) => {
@@ -82,9 +82,9 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
           ))}
         </nav>
 
-        {/* Right: Kinetic Collaborate Pill Button (Sliding badge from LEFT to RIGHT, fades out on scroll) */}
+        {/* Right: Kinetic Collaborate Pill Button (Anchored flush to right margin) */}
         <div
-          className={`flex items-center transition-all duration-400 ${
+          className={`flex items-center justify-end shrink-0 transition-all duration-400 ${
             isScrolledPastTop
               ? 'opacity-0 translate-y-[-10px] pointer-events-none'
               : 'opacity-100 translate-y-0'
@@ -94,17 +94,17 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
             href={portfolioData.personal.linkedin}
             target="_blank"
             rel="noreferrer"
-            className="group relative inline-flex items-center rounded-full h-10 sm:h-11 w-[155px] sm:w-[170px] overflow-hidden cursor-pointer bg-[#0A0D14] hover:bg-black text-[#F4E3B2] border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.5)] select-none transition-colors duration-500"
+            className="group relative inline-flex items-center rounded-full h-10 sm:h-11 w-[155px] sm:w-[170px] overflow-hidden cursor-pointer bg-[#0A0D14] hover:bg-black text-[#F4E3B2] border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] select-none transition-colors duration-500"
           >
-            {/* The Sliding Circle Badge (Starts on LEFT, slides to RIGHT on hover) */}
-            <div className="absolute top-1/2 -translate-y-1/2 left-1.5 w-7 h-7 sm:w-8 sm:h-8 bg-white/15 text-[#F4E3B2] group-hover:bg-[#F4E3B2] group-hover:text-[#0A0D14] rounded-full flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:left-[calc(100%-34px)] sm:group-hover:left-[calc(100%-38px)] group-hover:rotate-45 shadow-sm pointer-events-none">
-              <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-500" />
-            </div>
-
-            {/* The Text Label (Padding shifts on hover as badge slides across) */}
-            <span className="w-full text-center block whitespace-nowrap text-xs sm:text-[12px] font-semibold tracking-wide transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] pl-7 pr-2.5 group-hover:pl-2.5 group-hover:pr-7">
+            {/* The Text Label */}
+            <span className="w-full text-center block whitespace-nowrap text-xs sm:text-[12px] font-semibold tracking-wide transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] pr-8 pl-3 group-hover:pl-8 group-hover:pr-3">
               Collaborate
             </span>
+
+            {/* The Sliding Circle Badge (Anchored on RIGHT, slides to LEFT on hover) */}
+            <div className="absolute top-1/2 -translate-y-1/2 right-1.5 w-7 h-7 sm:w-8 sm:h-8 bg-white/15 text-[#F4E3B2] group-hover:bg-[#F4E3B2] group-hover:text-[#0A0D14] rounded-full flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:right-[calc(100%-34px)] sm:group-hover:right-[calc(100%-38px)] group-hover:rotate-45 shadow-sm pointer-events-none">
+              <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-500" />
+            </div>
           </a>
         </div>
 
