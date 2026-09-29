@@ -43,10 +43,10 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
         isVisibleInHero ? 'opacity-100' : 'opacity-0 pointer-events-none'
       } pt-5 sm:pt-6 pb-2 px-6 sm:px-10 lg:px-14 xl:px-20 pointer-events-none flex justify-center`}
     >
-      {/* 100% Transparent Full-Width Architectural Header */}
+      {/* 100% Transparent Full-Width Header Stage */}
       <div className="w-full max-w-[1520px] flex items-center justify-between relative bg-transparent pointer-events-auto">
         
-        {/* Left: Luxury Editorial Serif Brandmark (Pinned on scroll) */}
+        {/* Left: SOHAM Brandmark (Matched to Website's Primary Architectural Sans Font) */}
         <div className="flex items-center shrink-0">
           <a
             href="#hero"
@@ -54,15 +54,15 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="font-serif font-normal italic text-xl sm:text-2xl tracking-[0.06em] text-white hover:text-[#FF3B1D] transition-colors select-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] leading-none py-1"
+            className="font-sans font-black text-base sm:text-lg tracking-[0.24em] uppercase text-white hover:text-[#FF3B1D] transition-colors select-none drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)] leading-none py-1"
           >
-            Soham
+            SOHAM
           </a>
         </div>
 
-        {/* Right / Center: Monospaced Navigation Links (Smoothly fades out on scroll down) */}
+        {/* Center: EXACTLY CENTERED & HIGH-CONTRAST Navigation Links */}
         <nav
-          className={`flex items-center gap-6 sm:gap-8 lg:gap-10 ml-auto transition-all duration-400 pointer-events-auto ${
+          className={`hidden md:flex items-center gap-7 lg:gap-9 absolute left-1/2 -translate-x-1/2 transition-all duration-400 pointer-events-auto ${
             isScrolledPastTop
               ? 'opacity-0 -translate-y-3 pointer-events-none'
               : 'opacity-100 translate-y-0'
@@ -72,13 +72,16 @@ export default function Navbar({ isVisibleInHero = true }: NavbarProps) {
             <a
               key={link.name}
               href={link.href}
-              className="relative py-1 text-xs font-mono uppercase tracking-[0.18em] text-white/80 hover:text-white transition-colors group select-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]"
+              className="relative py-1 text-xs sm:text-[13px] font-mono font-semibold uppercase tracking-[0.20em] text-white hover:text-[#FF3B1D] transition-colors group select-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] flex items-center"
             >
               <span>{link.name}</span>
-              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#FF3B1D] transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#FF3B1D] transition-all duration-300 group-hover:w-full"></span>
             </a>
           ))}
         </nav>
+
+        {/* Right: Empty spacer div for perfect mathematical 3-column balance */}
+        <div className="w-[80px] hidden md:block shrink-0 pointer-events-none" />
 
       </div>
     </header>
