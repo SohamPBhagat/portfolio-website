@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
-import { ExternalLink, Play, Pause, Volume2, VolumeX, Layers, GitFork, Sparkles, CheckCircle2, Cpu } from 'lucide-react';
+import { ExternalLink, Play, Pause, Volume2, VolumeX, Layers, GitFork } from 'lucide-react';
 
 export default function VideoShowcaseSection() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -95,7 +95,7 @@ export default function VideoShowcaseSection() {
 
       {/* Sticky Viewport Stage: Centered with comfortable vertical margins */}
       <div 
-        className="sticky top-0 h-screen w-full flex flex-col justify-center items-center px-4 sm:px-8 lg:px-14 overflow-hidden select-none pt-12 sm:pt-14 pb-6"
+        className="sticky top-0 h-screen w-full flex flex-col justify-center items-center px-4 sm:px-8 lg:px-14 overflow-hidden select-none pt-10 sm:pt-12 pb-6"
         style={{ perspective: '1200px' }}
       >
         
@@ -108,7 +108,7 @@ export default function VideoShowcaseSection() {
           {/* =====================================================================
               SECTION 3 MASTHEAD (Clean Editorial Hierarchy)
               ===================================================================== */}
-          <div className="w-full mb-5 sm:mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-black/10">
+          <div className="w-full mb-4 sm:mb-5 flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-black/10">
             <div className="space-y-1">
               <div className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-[#FF3B1D] font-semibold flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B1D] animate-ping" />
@@ -136,76 +136,64 @@ export default function VideoShowcaseSection() {
           </div>
 
           {/* =====================================================================
-              CENTERPIECE macOS SHOWCASE WINDOW
+              SPACIOUS FLOATING EDITORIAL VIEW SWITCHER (Segregated Outside Window)
               ===================================================================== */}
-          <div className="w-full aspect-[16/9.6] max-h-[58vh] min-h-[360px] sm:min-h-[420px] bg-[#0A0D15] rounded-2xl border border-black/20 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col relative">
+          <div className="w-full flex items-center justify-between mb-4 sm:mb-5 select-none gap-4">
             
-            {/* Top Clean Control Bar */}
-            <div className="h-12 sm:h-13 bg-[#080B12] border-b border-white/10 px-4 sm:px-6 flex items-center justify-between select-none shrink-0 z-20">
-              
-              {/* Left macOS Window Traffic Dots & System Label */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]/85 inline-block" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]/85 inline-block" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]/85 inline-block" />
-                </div>
-                <div className="hidden md:flex items-center gap-2 pl-2 border-l border-white/10 font-mono text-[11px] text-white/50 tracking-wider">
-                  <span className="text-white/80 font-medium">FORGE_STUDIO</span>
-                  <span className="text-white/30">/</span>
-                  <span>v2.4_ADE</span>
-                </div>
-              </div>
-
-              {/* Spacious Spring-Animated View Switcher Tabs */}
-              <div className="flex items-center gap-1 bg-[#04060A] p-1 rounded-xl border border-white/10 text-xs font-mono select-none relative shadow-inner">
-                {(
-                  [
-                    { id: 'video', label: '3D Launch Reel', icon: Sparkles },
-                    { id: 'grid', label: '6-Agent Grid', icon: Layers },
-                    { id: 'canvas', label: 'DAG Canvas', icon: GitFork },
-                  ] as const
-                ).map((tab) => {
-                  const isActive = activeTab === tab.id;
-                  const Icon = tab.icon;
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => handleTabClick(tab.id)}
-                      className={`relative px-3 sm:px-4 py-1.5 rounded-lg text-xs font-mono transition-colors duration-200 cursor-pointer z-10 flex items-center gap-1.5 ${
-                        isActive
-                          ? 'text-white font-semibold'
-                          : 'text-neutral-400 hover:text-neutral-200'
-                      }`}
-                    >
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeShowcaseTab"
-                          transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                          className="absolute inset-0 bg-white/15 border border-white/20 rounded-lg shadow-sm -z-10"
-                        />
-                      )}
-                      <Icon className="w-3.5 h-3.5 text-[#FF3B1D]" />
-                      <span className="tracking-wide uppercase text-[11px] sm:text-xs">{tab.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Right External Link */}
-              <a
-                href="https://www.forgeapi.org/"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-1.5 sm:gap-2 text-xs font-mono text-emerald-400 hover:underline transition-opacity hover:opacity-85"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="hidden sm:inline">forgeapi.org</span>
-                <ExternalLink size={13} />
-              </a>
+            {/* Left: Refined Pill Controller */}
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 p-1.5 rounded-full bg-[#EAE8E3] border border-black/10 shadow-inner">
+              {(
+                [
+                  { id: 'video', label: '3D Product Reel', icon: Play },
+                  { id: 'grid', label: '6-Agent Parallel Grid', icon: Layers },
+                  { id: 'canvas', label: 'DAG Workflow Canvas', icon: GitFork },
+                ] as const
+              ).map((tab) => {
+                const isActive = activeTab === tab.id;
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => handleTabClick(tab.id)}
+                    className={`relative px-4 sm:px-5 py-2 rounded-full font-mono text-xs sm:text-[13px] font-semibold transition-all duration-200 cursor-pointer z-10 flex items-center gap-2 ${
+                      isActive
+                        ? 'text-[#0A0D14]'
+                        : 'text-neutral-500 hover:text-neutral-900'
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeShowcaseTab"
+                        transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                        className="absolute inset-0 bg-white rounded-full border border-black/10 shadow-sm -z-10"
+                      />
+                    )}
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#FF3B1D]' : 'text-neutral-400'}`} />
+                    <span className="tracking-wide uppercase text-[11px] sm:text-xs">{tab.label}</span>
+                  </button>
+                );
+              })}
             </div>
 
+            {/* Right: Clean Live Link */}
+            <a
+              href="https://www.forgeapi.org/"
+              target="_blank"
+              rel="noreferrer"
+              className="hidden sm:inline-flex items-center gap-2 text-xs font-mono font-medium text-neutral-700 hover:text-black transition-colors px-3.5 py-2 rounded-full border border-black/10 hover:border-black/25 bg-white/60 shadow-sm"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>forgeapi.org</span>
+              <ExternalLink size={13} className="text-neutral-500" />
+            </a>
+          </div>
+
+          {/* =====================================================================
+              CENTERPIECE SHOWCASE WINDOW (Zero Double-Navbar Clutter)
+              ===================================================================== */}
+          <div className="w-full aspect-[16/9.4] max-h-[56vh] min-h-[350px] sm:min-h-[400px] bg-[#0A0D15] rounded-2xl border border-black/20 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col relative">
+            
             {/* Display Stage with AnimatePresence */}
             <div className="relative flex-1 bg-[#05070C] overflow-hidden flex items-center justify-center">
               <AnimatePresence mode="wait">
@@ -240,7 +228,7 @@ export default function VideoShowcaseSection() {
                       type="button"
                       onClick={togglePlay}
                       aria-label={isPlaying ? 'Pause video' : 'Play video'}
-                      className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/10 hover:bg-black/25 transition-colors duration-200 group/playbtn cursor-pointer"
+                      className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/5 hover:bg-black/20 transition-colors duration-200 group/playbtn cursor-pointer"
                     >
                       {!isPlaying && (
                         <div className="w-16 h-16 rounded-full bg-[#FF3B1D] text-white flex items-center justify-center shadow-2xl transform scale-100 group-hover/playbtn:scale-105 transition-transform duration-200">
@@ -248,12 +236,6 @@ export default function VideoShowcaseSection() {
                         </div>
                       )}
                     </button>
-
-                    {/* Live Tech Overlay Badge */}
-                    <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-white/90 flex items-center gap-2 pointer-events-none shadow-xl">
-                      <span className="w-2 h-2 rounded-full bg-[#FF3B1D] animate-ping" />
-                      <span>3D PRODUCT LAUNCH TRAILER &bull; HARDWARE SWEEP</span>
-                    </div>
                   </motion.div>
                 )}
 
@@ -275,17 +257,6 @@ export default function VideoShowcaseSection() {
                       loading="lazy"
                       className="w-full h-full object-cover object-top"
                     />
-                    
-                    {/* Live Tech Overlay Badge */}
-                    <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-white/90 flex items-center gap-2 pointer-events-none shadow-xl">
-                      <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                      <span>6 PARALLEL CONPTY WORKTREE RUNTIMES &bull; CLAUDE / CODEX / ANTIGRAVITY</span>
-                    </div>
-
-                    <div className="absolute bottom-4 right-4 hidden sm:flex items-center gap-2 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-neutral-300 pointer-events-none">
-                      <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                      <span>ZERO GIT MERGE CONFLICTS</span>
-                    </div>
                   </motion.div>
                 )}
 
@@ -307,17 +278,6 @@ export default function VideoShowcaseSection() {
                       loading="lazy"
                       className="w-full h-full object-cover object-top"
                     />
-                    
-                    {/* Live Tech Overlay Badge */}
-                    <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-white/90 flex items-center gap-2 pointer-events-none shadow-xl">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      <span>DAG WORKFLOW CANVAS &bull; REAL-TIME BEZIER ORCHESTRATION</span>
-                    </div>
-
-                    <div className="absolute bottom-4 right-4 hidden sm:flex items-center gap-2 bg-black/80 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-lg font-mono text-[10px] text-neutral-300 pointer-events-none">
-                      <Cpu className="w-3 h-3 text-blue-400" />
-                      <span>DYNAMIC STATE ORCHESTRATION</span>
-                    </div>
                   </motion.div>
                 )}
 
@@ -339,7 +299,7 @@ export default function VideoShowcaseSection() {
                       {isPlaying ? <Pause size={12} /> : <Play size={12} className="ml-0.5 fill-current" />}
                     </button>
                     <span className="font-mono text-[10px] sm:text-[11px] text-white/80 tracking-wider">
-                      3D LAUNCH TRAILER (10s)
+                      3D LAUNCH REEL (10s)
                     </span>
                   </div>
 
